@@ -10,7 +10,12 @@ import pickle
 import joblib
 import os
 import sys
-import google.generativeai as genai
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    GENAI_AVAILABLE = False
+    print("Google Generative AI not available - chatbot functionality will be limited")
 
 # Add the parent directory to the path to import utils
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -187,7 +192,8 @@ weather_base_url = 'http://api.weatherapi.com/v1/forecast.json'
 
 # Gemini API Configuration
 GEMINI_API_KEY = 'AIzaSyB2JMfq0VwAoUL3v3coyqRuevOwCgL0I9U'  # Free hardcoded API key
-genai.configure(api_key=GEMINI_API_KEY)
+if GENAI_AVAILABLE:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize ML models
 crop_recommendation_model = None
@@ -489,6 +495,9 @@ def get_gemini_response(user_message):
     """
     Get response from Gemini AI for farmer queries
     """
+    if not GENAI_AVAILABLE:
+        return "I'm sorry, but the AI chatbot is currently unavailable. Please try again later or contact our support team for assistance with your farming questions."
+    
     try:
         # Create the model
         model = genai.GenerativeModel('gemini-2.5-flash')
