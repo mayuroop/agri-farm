@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgriFarm | Smart Farming Solutions</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: var(--light-bg);
+        color: var(--text-dark);
+      }
+
+      /* Header Styles */
+      /* Updated Header Styles */
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        transition: all 0.3s ease;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      .logo-icon {
+        width: 35px;
+        height: 35px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary-color);
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      /* Dropdown Menu Styles */
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-btn {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .dropdown-btn:hover {
+        color: var(--primary-color);
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        min-width: 200px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        z-index: 1000;
+        padding: 0.5rem 0;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+        animation: dropdownSlide 0.3s ease;
+      }
+
+      @keyframes dropdownSlide {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 0.6rem 1rem;
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 0.9rem;
+        border-radius: 0;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown-content a:hover {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--primary-color);
+        padding-left: 1.2rem;
+      }
+
+      .dropdown-content a::after {
+        display: none;
+      }
+
+      .auth-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-left: 2rem;
+      }
+
+      .auth-buttons .cta-button {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      /* User Info Styles */
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 1rem;
+        padding-left: 1rem;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .welcome-message {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        font-weight: 500;
+      }
+
+      /* Mobile Menu Toggle */
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: var(--dark-green);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .menu-toggle:hover {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--primary-color);
+      }
+
+      /* Responsive Navigation */
+      @media (max-width: 1200px) {
+        .nav-links {
+          gap: 0.3rem;
+        }
+        
+        .nav-links a {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.85rem;
+        }
+
+        .user-info {
+          margin-left: 0.5rem;
+          padding-left: 0.5rem;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .menu-toggle {
+          display: block;
+        }
+
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 1.5rem;
+          flex-direction: column;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+          border-radius: 0 0 20px 20px;
+          backdrop-filter: blur(10px);
+          gap: 0;
+        }
+
+        .nav-links.active {
+          display: flex;
+          animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .nav-links a {
+          width: 100%;
+          padding: 1rem;
+          text-align: left;
+          border-radius: 12px;
+          margin-bottom: 0.5rem;
+          font-size: 1rem;
+        }
+
+        .dropdown {
+          width: 100%;
+        }
+
+        .dropdown-btn {
+          width: 100%;
+          padding: 1rem;
+          text-align: left;
+          justify-content: space-between;
+          border-radius: 12px;
+          margin-bottom: 0.5rem;
+        }
+
+        .dropdown-content {
+          position: static;
+          display: none;
+          box-shadow: none;
+          background: rgba(76, 175, 80, 0.05);
+          border-radius: 12px;
+          margin-top: 0.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .dropdown.active .dropdown-content {
+          display: block;
+        }
+
+        .user-info {
+          width: 100%;
+          justify-content: center;
+          border-left: none;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+          padding-top: 1rem;
+          margin-top: 1rem;
+          margin-left: 0;
+        }
+      }
+
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+          url("https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80");
+        height: 80vh;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .hero-content {
+        max-width: 800px;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 2rem;
+      }
+
+      .cta-button {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: var(--accent-color);
+        color: var(--text-dark);
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-3px);
+      }
+
+      /* Features Section */
+      .features {
+        padding: 5rem 2rem;
+        background: var(--light-bg);
+      }
+
+      .features-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
+      }
+
+      .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+      }
+
+      .feature-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark-green);
+      }
+
+      /* Services Section */
+      .services {
+        padding: 5rem 2rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: var(--text-light);
+      }
+
+      .services-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .service-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+      }
+
+      .service-card h3 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+
+      /* Statistics Section */
+      .stats {
+        padding: 5rem 2rem;
+        background: var(--light-bg);
+      }
+
+      .stats-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+        text-align: center;
+      }
+
+      .stat-item {
+        padding: 2rem;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+      }
+
+      /* Footer */
+      footer {
+        background: var(--dark-green);
+        color: var(--text-light);
+        padding: 4rem 2rem;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+      }
+
+      .footer-section h3 {
+        margin-bottom: 1.5rem;
+        color: var(--accent-color);
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 0.8rem;
+      }
+
+      .footer-section a {
+        color: var(--text-light);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-section a:hover {
+        color: var(--accent-color);
+      }
+
+      .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .social-links a {
+        font-size: 1.5rem;
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .features-grid,
+        .services-grid,
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      /* User Info Styles */
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 2rem;
+        color: var(--text-dark);
+      }
+
+      .user-info a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      .user-info a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .user-info a:hover::after {
+        width: 100%;
+      }
+
+      .user-info a:hover {
+        background: rgba(76, 175, 80, 0.2);
+      }
+
+             .welcome-message {
+         font-weight: 500;
+         color: var(--dark-green);
+         margin-right: 0.5rem;
+       }
+
+               /* Feedback Section in Footer */
+        .footer-section.feedback-section {
+          text-align: center;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 2rem;
+          margin-top: 2rem;
+        }
+
+        .footer-section.feedback-section h3 {
+          font-size: 1.8rem;
+          color: var(--text-light);
+          margin-bottom: 1rem;
+        }
+
+        .footer-section.feedback-section p {
+          font-size: 1rem;
+          color: var(--text-light);
+          margin-bottom: 1.5rem;
+          opacity: 0.9;
+        }
+
+        .feedback-button {
+          display: inline-block;
+          padding: 0.8rem 2rem;
+          background: var(--accent-color);
+          color: var(--text-light);
+          text-decoration: none;
+          border-radius: 25px;
+          font-weight: 600;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .feedback-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+          background: var(--secondary-color);
+        }
+
+        /* Crop Recommendation Styles */
+        .crop-recommendation {
+          padding: 5rem 2rem;
+          background: var(--light-bg);
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .section-header {
+          text-align: center;
+          margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+          font-size: 2.5rem;
+          color: var(--dark-green);
+          margin-bottom: 1rem;
+        }
+
+        .section-header p {
+          font-size: 1.1rem;
+          color: var(--text-dark);
+          opacity: 0.8;
+        }
+
+        .recommendation-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 3rem;
+          align-items: start;
+        }
+
+        .form-container {
+          background: white;
+          padding: 2rem;
+          border-radius: 15px;
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .recommendation-form {
+          width: 100%;
+        }
+
+        .form-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1.5rem;
+          margin-bottom: 2rem;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .form-group label {
+          font-weight: 600;
+          color: var(--dark-green);
+          margin-bottom: 0.5rem;
+          font-size: 0.9rem;
+        }
+
+        .form-group input {
+          padding: 0.8rem;
+          border: 2px solid #e0e0e0;
+          border-radius: 8px;
+          font-size: 1rem;
+          transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+          outline: none;
+          border-color: var(--primary-color);
+        }
+
+        .form-group small {
+          color: #666;
+          font-size: 0.8rem;
+          margin-top: 0.3rem;
+        }
+
+        .submit-btn {
+          width: 100%;
+          padding: 1rem 2rem;
+          background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+          color: white;
+          border: none;
+          border-radius: 10px;
+          font-size: 1.1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .submit-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .submit-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .results-container {
+          background: white;
+          padding: 2rem;
+          border-radius: 15px;
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .results-container h3 {
+          color: var(--dark-green);
+          margin-bottom: 1.5rem;
+          text-align: center;
+        }
+
+        .results-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .result-card {
+          background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+          padding: 1.5rem;
+          border-radius: 10px;
+          border-left: 4px solid var(--primary-color);
+          transition: transform 0.3s ease;
+        }
+
+        .result-card:hover {
+          transform: translateX(5px);
+        }
+
+        .result-card.high-confidence {
+          border-left-color: #28a745;
+        }
+
+        .result-card.medium-confidence {
+          border-left-color: #ffc107;
+        }
+
+        .result-card.low-confidence {
+          border-left-color: #dc3545;
+        }
+
+        .crop-name {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: var(--dark-green);
+          margin-bottom: 0.5rem;
+        }
+
+        .crop-score {
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin-bottom: 0.3rem;
+        }
+
+        .crop-confidence {
+          font-size: 0.9rem;
+          padding: 0.3rem 0.8rem;
+          border-radius: 20px;
+          display: inline-block;
+          font-weight: 500;
+        }
+
+        .confidence-high {
+          background: #d4edda;
+          color: #155724;
+        }
+
+        .confidence-medium {
+          background: #fff3cd;
+          color: #856404;
+        }
+
+        .confidence-low {
+          background: #f8d7da;
+          color: #721c24;
+        }
+
+        .loading {
+          text-align: center;
+          padding: 2rem;
+          color: var(--primary-color);
+        }
+
+        .error {
+          background: #f8d7da;
+          color: #721c24;
+          padding: 1rem;
+          border-radius: 8px;
+          margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+          .recommendation-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+
+          .form-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .section-header h2 {
+            font-size: 2rem;
+          }
+        }
+
+       /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .user-info {
+          margin-left: 0;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%;
+          padding: 1rem 0;
+        }
+
+        .user-info a {
+          width: 100%;
+          text-align: left;
+        }
+
+        /* Model Status Styles */
+        .model-status-header {
+          width: 100%;
+          margin-bottom: 1.5rem;
+          padding: 1rem;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 12px;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .model-status {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 600;
+          font-size: 1.1rem;
+        }
+
+        .model-status i {
+          margin-right: 0.5rem;
+          font-size: 1.2rem;
+          animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+          0% { opacity: 1; }
+          50% { opacity: 0.7; }
+          100% { opacity: 1; }
+        }
+
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="nav-container">
+        <a href="#" class="logo">
+          <div class="logo-icon">🌱</div>
+          AgriFarm
+        </a>
+
+        <button class="menu-toggle">☰</button>
+
+        <div class="nav-links">
+          <a href="{{ url_for('home') }}">Home</a>
+          
+          <div class="dropdown">
+            <button class="dropdown-btn">
+              Farm Tools <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="#crop-recommendation">Crop Recommendation</a>
+              <a href="{{ url_for('fertilizer_recommendation') }}">Fertilizer Guide</a>
+              <a href="{{ url_for('weather') }}">Weather Forecast</a>
+              <a href="{{ url_for('chatbot_page') }}">AgriBot Assistant</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="dropdown-btn">
+              Marketplace <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
+              <a href="{{ url_for('marketplace_view') }}">Buy & Sell</a>
+              <a href="{{ url_for('view_orders') }}">My Orders</a>
+            </div>
+          </div>
+
+          {% if session.get('role') == 'admin' %}
+          <a href="{{ url_for('admin_orders') }}">Admin Panel</a>
+          {% endif %}
+
+          <a href="{{ url_for('feedback') }}">Feedback</a>
+          <a href="#contact">Contact</a>
+
+          <div class="user-info">
+            {% if session.get('username') %}
+            <span class="welcome-message">Welcome, {{ session['username'] }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </header>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Transforming Agriculture with Smart Solutions</h1>
+        <p>
+          Empowering farmers with real-time data, market insights, and modern
+          farming techniques
+        </p>
+        <a href="#" class="cta-button">Get Started</a>
+      </div>
+    </section>
+
+
+    <section class="features" id="features">
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fas fa-chart-line feature-icon"></i>
+          <h3>Market Analytics</h3>
+          <p>Real-time crop pricing and market trends analysis</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-cloud-sun feature-icon"></i>
+          <h3>Smart Weather</h3>
+          <p>Accurate weather forecasting and farming alerts</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-shopping-cart feature-icon"></i>
+          <h3>Digital Marketplace</h3>
+          <p>Direct connect with buyers and suppliers nationwide</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="services" id="services">
+      <div class="services-grid">
+        <div class="service-card">
+          <h3>Crop Advisory</h3>
+          <p>Expert guidance on crop selection and cultivation practices</p>
+        </div>
+        <div class="service-card">
+          <h3>Soil Testing</h3>
+          <p>Comprehensive soil analysis and nutrient management</p>
+        </div>
+        <div class="service-card">
+          <h3>Farm Equipment</h3>
+          <p>Modern farming tools and machinery rentals</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Crop Recommendation Section -->
+    <section class="crop-recommendation" id="crop-recommendation">
+      <div class="container">
+        <div class="section-header">
+          <h2>AI-Powered Crop Recommendation</h2>
+          <p>Get personalized crop recommendations using advanced machine learning models based on your soil and weather conditions</p>
+        </div>
+        
+        <div class="recommendation-container">
+          <div class="form-container">
+            <form id="cropRecommendationForm" class="recommendation-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="n">Nitrogen (N) - ppm</label>
+                  <input type="number" id="n" name="n" min="0" max="300" step="0.1" required>
+                  <small>Range: 0-300 ppm</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="p">Phosphorus (P) - ppm</label>
+                  <input type="number" id="p" name="p" min="0" max="150" step="0.1" required>
+                  <small>Range: 0-150 ppm</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="k">Potassium (K) - ppm</label>
+                  <input type="number" id="k" name="k" min="0" max="250" step="0.1" required>
+                  <small>Range: 0-250 ppm</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="temperature">Temperature (°C)</label>
+                  <input type="number" id="temperature" name="temperature" min="-10" max="50" step="0.1" required>
+                  <small>Range: -10°C to 50°C</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="humidity">Humidity (%)</label>
+                  <input type="number" id="humidity" name="humidity" min="0" max="100" step="0.1" required>
+                  <small>Range: 0-100%</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="ph">Soil pH</label>
+                  <input type="number" id="ph" name="ph" min="3" max="12" step="0.1" required>
+                  <small>Range: 3.0-12.0</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="rainfall">Rainfall (mm)</label>
+                  <input type="number" id="rainfall" name="rainfall" min="0" max="5000" step="1" required>
+                  <small>Range: 0-5000 mm</small>
+                </div>
+              </div>
+              
+              <button type="submit" class="submit-btn">
+                <i class="fas fa-seedling"></i>
+                Get Crop Recommendation
+              </button>
+            </form>
+          </div>
+          
+          <div class="results-container" id="resultsContainer" style="display: none;">
+            <h3>Recommended Crops</h3>
+            <div class="results-grid" id="resultsGrid">
+              <!-- Results will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" id="stats">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">15K+</div>
+          <p>Happy Farmers</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">85%</div>
+          <p>Yield Improvement</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">50+</div>
+          <p>Crop Varieties</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <p>Expert Support</p>
+        </div>
+      </div>
+    </section>
+
+    <footer id="contact">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>AgriFarm</h3>
+          <p>Revolutionizing agriculture through technology and innovation</p>
+        </div>
+                  <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#stats">Statistics</a></li>
+              <li><a href="#feedback">Feedback</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+        <div class="footer-section">
+          <h3>Connect With Us</h3>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+        <div class="footer-section feedback-section" id="feedback">
+          <h3>We Value Your Feedback</h3>
+          <p>Help us improve our services by sharing your thoughts and suggestions</p>
+          <a href="{{ url_for('feedback') }}" class="feedback-button">Leave Feedback</a>
+        </div>
+      </div>
+    </footer>
+
+
+    <script>
+      // Mobile menu toggle
+      document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+
+      // Mobile dropdown functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        
+        dropdowns.forEach(dropdown => {
+          const dropdownBtn = dropdown.querySelector('.dropdown-btn');
+          
+          dropdownBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Close other dropdowns in mobile
+            if (window.innerWidth <= 992) {
+              dropdowns.forEach(otherDropdown => {
+                if (otherDropdown !== dropdown) {
+                  otherDropdown.classList.remove('active');
+                }
+              });
+              
+              // Toggle current dropdown
+              dropdown.classList.toggle('active');
+            }
+          });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+          const navLinks = document.querySelector('.nav-links');
+          const menuToggle = document.querySelector('.menu-toggle');
+          
+          if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+            navLinks.classList.remove('active');
+            
+            // Close all dropdowns
+            dropdowns.forEach(dropdown => {
+              dropdown.classList.remove('active');
+            });
+          }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+          if (window.innerWidth > 992) {
+            document.querySelector('.nav-links').classList.remove('active');
+            dropdowns.forEach(dropdown => {
+              dropdown.classList.remove('active');
+            });
+          }
+        });
+      });
+
+      // Crop Recommendation Form Handler
+      document.getElementById('cropRecommendationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        const submitBtn = form.querySelector('.submit-btn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsGrid = document.getElementById('resultsGrid');
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        
+        // Hide previous results
+        resultsContainer.style.display = 'none';
+        
+        try {
+          // Collect form data
+          const formData = new FormData(form);
+          
+          // Send request to backend
+          const response = await fetch('/crop-recommendation', {
+            method: 'POST',
+            body: formData
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            // Display results
+            displayResults(data.recommendations, data.input_data, data.model_status);
+            resultsContainer.style.display = 'block';
+            
+            // Scroll to results
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            throw new Error(data.error || 'Failed to get recommendations');
+          }
+          
+        } catch (error) {
+          console.error('Error:', error);
+          showError('Failed to get crop recommendations. Please try again.');
+        } finally {
+          // Reset button state
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-seedling"></i> Get Crop Recommendation';
+        }
+      });
+      
+      function displayResults(recommendations, inputData, modelStatus) {
+        const resultsGrid = document.getElementById('resultsGrid');
+        resultsGrid.innerHTML = '';
+        
+        if (recommendations.length === 0) {
+          resultsGrid.innerHTML = '<div class="error">No suitable crops found for the given conditions.</div>';
+          return;
+        }
+        
+        // Add model status header
+        const statusHeader = document.createElement('div');
+        statusHeader.className = 'model-status-header';
+        statusHeader.innerHTML = `
+          <div class="model-status">
+            <i class="fas fa-robot"></i>
+            <span>${modelStatus || 'AI Model Active'}</span>
+          </div>
+        `;
+        resultsGrid.appendChild(statusHeader);
+        
+        recommendations.forEach((rec, index) => {
+          const resultCard = document.createElement('div');
+          resultCard.className = `result-card ${rec.confidence.toLowerCase()}-confidence`;
+          
+          const confidenceClass = `confidence-${rec.confidence.toLowerCase()}`;
+          
+          resultCard.innerHTML = `
+            <div class="crop-name">${index + 1}. ${rec.crop}</div>
+            <div class="crop-score">Compatibility Score: ${rec.score}%</div>
+            <div class="crop-confidence ${confidenceClass}">${rec.confidence} Confidence</div>
+          `;
+          
+          resultsGrid.appendChild(resultCard);
+        });
+        
+        // Add input data summary
+        const summaryCard = document.createElement('div');
+        summaryCard.className = 'result-card';
+        summaryCard.innerHTML = `
+          <div class="crop-name">Your Input Parameters</div>
+          <div style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+            N: ${inputData.n} ppm | P: ${inputData.p} ppm | K: ${inputData.k} ppm<br>
+            Temperature: ${inputData.temperature}°C | Humidity: ${inputData.humidity}%<br>
+            pH: ${inputData.ph} | Rainfall: ${inputData.rainfall} mm
+          </div>
+        `;
+        resultsGrid.appendChild(summaryCard);
+      }
+      
+      function showError(message) {
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsGrid = document.getElementById('resultsGrid');
+        
+        resultsGrid.innerHTML = `<div class="error">${message}</div>`;
+        resultsContainer.style.display = 'block';
+        resultsContainer.scrollIntoView({ behavior: 'smooth' });
+      }
+      
+      // Smooth scrolling for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

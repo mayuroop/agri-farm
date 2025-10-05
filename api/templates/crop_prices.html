@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crop Prices | AgriFarm</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        min-height: 100vh;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary-color);
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      /* Dropdown Menu Styles */
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-btn {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .dropdown-btn:hover {
+        color: var(--primary-color);
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        min-width: 200px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        z-index: 1000;
+        padding: 0.5rem 0;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+        animation: dropdownSlide 0.3s ease;
+      }
+
+      @keyframes dropdownSlide {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 0.6rem 1rem;
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 0.9rem;
+        border-radius: 0;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown-content a:hover {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--primary-color);
+        padding-left: 1.2rem;
+      }
+
+      .dropdown-content a::after {
+        display: none;
+      }
+
+      /* User Info Styles */
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 1rem;
+        padding-left: 1rem;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .welcome-message {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        font-weight: 500;
+      }
+
+      /* Mobile Menu Toggle */
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: var(--dark-green);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .menu-toggle:hover {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--primary-color);
+      }
+
+      /* Responsive Navigation */
+      @media (max-width: 1200px) {
+        .nav-links {
+          gap: 0.3rem;
+        }
+        
+        .nav-links a {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.85rem;
+        }
+
+        .user-info {
+          margin-left: 0.5rem;
+          padding-left: 0.5rem;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .menu-toggle {
+          display: block;
+        }
+
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 1.5rem;
+          flex-direction: column;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+          border-radius: 0 0 20px 20px;
+          backdrop-filter: blur(10px);
+          gap: 0;
+        }
+
+        .nav-links.active {
+          display: flex;
+          animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .nav-links a {
+          width: 100%;
+          padding: 1rem;
+          text-align: left;
+          border-radius: 12px;
+          margin-bottom: 0.5rem;
+          font-size: 1rem;
+        }
+
+        .dropdown {
+          width: 100%;
+        }
+
+        .dropdown-btn {
+          width: 100%;
+          padding: 1rem;
+          text-align: left;
+          justify-content: space-between;
+          border-radius: 12px;
+          margin-bottom: 0.5rem;
+        }
+
+        .dropdown-content {
+          position: static;
+          display: none;
+          box-shadow: none;
+          background: rgba(76, 175, 80, 0.05);
+          border-radius: 12px;
+          margin-top: 0.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .dropdown.active .dropdown-content {
+          display: block;
+        }
+
+        .user-info {
+          width: 100%;
+          justify-content: center;
+          border-left: none;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+          padding-top: 1rem;
+          margin-top: 1rem;
+          margin-left: 0;
+        }
+      }
+
+      /* Mobile Menu Toggle */
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--dark-green);
+        cursor: pointer;
+      }
+
+      /* User Info Styles */
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 2rem;
+        color: var(--text-dark);
+      }
+
+      .user-info a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      .user-info a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .user-info a:hover::after {
+        width: 100%;
+      }
+
+      .user-info a:hover {
+        background: rgba(76, 175, 80, 0.2);
+      }
+
+      .welcome-message {
+        font-weight: 500;
+        color: var(--dark-green);
+        margin-right: 0.5rem;
+      }
+
+      main {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+      }
+
+      .search-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+      }
+
+      .search-form {
+        display: flex;
+        gap: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+        outline: none;
+      }
+
+      .search-button {
+        padding: 1rem 2rem;
+        background: var(--accent-color);
+        color: var(--text-dark);
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .search-button:hover {
+        background: #ffd54f;
+        transform: scale(1.02);
+      }
+
+      .price-cards {
+        display: grid;
+        gap: 2rem;
+      }
+
+      .crop-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+      }
+
+      .crop-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .crop-header {
+        margin-bottom: 1.5rem;
+      }
+
+      .crop-title {
+        color: var(--dark-green);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .price-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .price-item {
+        padding: 1rem;
+        background: var(--light-bg);
+        border-radius: 10px;
+      }
+
+      .price-label {
+        color: var(--secondary-color);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .price-value {
+        color: var(--text-dark);
+        font-weight: 500;
+      }
+
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 1rem;
+          flex-direction: column;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+
+        .user-info {
+          margin-left: 0;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%;
+          padding: 1rem 0;
+        }
+
+        .user-info a {
+          width: 100%;
+          text-align: left;
+        }
+
+        main {
+          padding: 0 1rem;
+        }
+
+        .search-form {
+          flex-direction: column;
+        }
+
+        .price-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="nav-container">
+        <a href="/" class="logo">
+          <div class="logo-icon">🌱</div>
+          AgriFarm
+        </a>
+        <button class="menu-toggle">☰</button>
+        <button class="menu-toggle">☰</button>
+
+        <div class="nav-links">
+          <a href="{{ url_for('home') }}">Home</a>
+          
+          <div class="dropdown">
+            <button class="dropdown-btn">
+              Farm Tools <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="#crop-recommendation">Crop Recommendation</a>
+              <a href="{{ url_for('fertilizer_recommendation') }}">Fertilizer Guide</a>
+              <a href="{{ url_for('weather') }}">Weather Forecast</a>
+              <a href="{{ url_for('chatbot_page') }}">AgriBot Assistant</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="dropdown-btn">
+              Marketplace <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
+              <a href="{{ url_for('marketplace_view') }}">Buy & Sell</a>
+              <a href="{{ url_for('view_orders') }}">My Orders</a>
+            </div>
+          </div>
+
+          {% if session.get('role') == 'admin' %}
+          <a href="{{ url_for('admin_orders') }}">Admin Panel</a>
+          {% endif %}
+
+          <a href="{{ url_for('feedback') }}">Feedback</a>
+          <a href="#contact">Contact</a>
+          <div class="user-info">
+            {% if session.get('username') %}
+            <span class="welcome-message">Welcome, {{ session['username'] }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="search-container">
+        <form
+          class="search-form"
+          method="POST"
+          action="{{ url_for('crop_prices_view') }}"
+        >
+          <input
+            type="text"
+            name="district"
+            placeholder="Enter district name"
+            class="search-input"
+          />
+          <button type="submit" class="search-button">Search</button>
+        </form>
+      </div>
+
+      <div class="price-cards">
+        {% for record in data.records %}
+        <div class="crop-card">
+          <div class="crop-header">
+            <h2 class="crop-title">{{ record.commodity }}</h2>
+          </div>
+          <div class="price-grid">
+            <div class="price-item">
+              <div class="price-label">State</div>
+              <div class="price-value">{{ record.state }}</div>
+            </div>
+            <div class="price-item">
+              <div class="price-label">District</div>
+              <div class="price-value">{{ record.district }}</div>
+            </div>
+            <div class="price-item">
+              <div class="price-label">Market</div>
+              <div class="price-value">{{ record.market }}</div>
+            </div>
+            <div class="price-item">
+              <div class="price-label">Variety</div>
+              <div class="price-value">{{ record.variety }}</div>
+            </div>
+            <div class="price-item">
+              <div class="price-label">Min Price</div>
+              <div class="price-value">₹{{ record.min_price }}</div>
+            </div>
+            <div class="price-item">
+              <div class="price-label">Max Price</div>
+              <div class="price-value">₹{{ record.max_price }}</div>
+            </div>
+            <div class="price-item">
+              <div class="price-label">Modal Price</div>
+              <div class="price-value">₹{{ record.modal_price }}</div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </main>
+
+    <script>
+      // Mobile menu toggle
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+
+      menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+      });
+
+      // Mobile dropdown functionality
+      const dropdowns = document.querySelectorAll('.dropdown');
+      
+      dropdowns.forEach(dropdown => {
+        const dropdownBtn = dropdown.querySelector('.dropdown-btn');
+        
+        dropdownBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Close other dropdowns in mobile
+          if (window.innerWidth <= 992) {
+            dropdowns.forEach(otherDropdown => {
+              if (otherDropdown !== dropdown) {
+                otherDropdown.classList.remove('active');
+              }
+            });
+            
+            // Toggle current dropdown
+            dropdown.classList.toggle('active');
+          }
+        });
+      });
+
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+          navLinks.classList.remove('active');
+          
+          // Close all dropdowns
+          dropdowns.forEach(dropdown => {
+            dropdown.classList.remove('active');
+          });
+        }
+      });
+
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 992) {
+          navLinks.classList.remove('active');
+          dropdowns.forEach(dropdown => {
+            dropdown.classList.remove('active');
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

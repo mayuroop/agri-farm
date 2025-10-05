@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fertilizer Recommendation - AgriFarm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4caf50;
+            --secondary-color: #388e3c;
+            --accent-color: #ffc107;
+            --dark-green: #2e7d32;
+            --light-bg: #f9f9f9;
+            --text-dark: #333;
+            --text-light: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-green);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .dropdown-btn:hover {
+            color: var(--primary-color);
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            z-index: 1000;
+            padding: 0.5rem 0;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: dropdownSlide 0.3s ease;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.6rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-radius: 0;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+            padding-left: 1.2rem;
+        }
+
+        .dropdown-content a::after {
+            display: none;
+        }
+
+        /* User Info Styles */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 1rem;
+            padding-left: 1rem;
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-message {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--dark-green);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+        }
+
+        /* Responsive Navigation */
+        @media (max-width: 1200px) {
+            .nav-links {
+                gap: 0.3rem;
+            }
+            
+            .nav-links a {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            .user-info {
+                margin-left: 0.5rem;
+                padding-left: 0.5rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 1.5rem;
+                flex-direction: column;
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+                border-radius: 0 0 20px 20px;
+                backdrop-filter: blur(10px);
+                gap: 0;
+            }
+
+            .nav-links.active {
+                display: flex;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .nav-links a {
+                width: 100%;
+                padding: 1rem;
+                text-align: left;
+                border-radius: 12px;
+                margin-bottom: 0.5rem;
+                font-size: 1rem;
+            }
+
+            .dropdown {
+                width: 100%;
+            }
+
+            .dropdown-btn {
+                width: 100%;
+                padding: 1rem;
+                text-align: left;
+                justify-content: space-between;
+                border-radius: 12px;
+                margin-bottom: 0.5rem;
+            }
+
+            .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                background: rgba(76, 175, 80, 0.05);
+                border-radius: 12px;
+                margin-top: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .dropdown.active .dropdown-content {
+                display: block;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: center;
+                border-left: none;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+                padding-top: 1rem;
+                margin-top: 1rem;
+                margin-left: 0;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--dark-green);
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            opacity: 0.8;
+        }
+
+        .form-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-green);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group small {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-header h3 {
+            color: var(--dark-green);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nutrient-analysis {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .nutrient-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .nutrient-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .nutrient-name {
+            font-weight: 600;
+            color: var(--dark-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .nutrient-values {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .deficiency-highlight {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .deficiency-high {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .fertilizer-recommendation {
+            background: #d4edda;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .fertilizer-recommendation h4 {
+            color: #155724;
+            margin-bottom: 1rem;
+        }
+
+        .fertilizer-recommendation ul {
+            margin-left: 1.5rem;
+        }
+
+        .fertilizer-recommendation li {
+            margin-bottom: 0.5rem;
+            color: #155724;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .form-section {
+                padding: 2rem 1rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🌱</div>
+                AgriFarm
+            </a>
+
+            <button class="menu-toggle">☰</button>
+
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}">Home</a>
+                
+                <div class="dropdown">
+                    <button class="dropdown-btn">
+                        Farm Tools <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#crop-recommendation">Crop Recommendation</a>
+                        <a href="{{ url_for('fertilizer_recommendation') }}">Fertilizer Guide</a>
+                        <a href="{{ url_for('weather') }}">Weather Forecast</a>
+                        <a href="{{ url_for('chatbot_page') }}">AgriBot Assistant</a>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <button class="dropdown-btn">
+                        Marketplace <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
+                        <a href="{{ url_for('marketplace_view') }}">Buy & Sell</a>
+                        <a href="{{ url_for('view_orders') }}">My Orders</a>
+                    </div>
+                </div>
+
+                {% if session.get('role') == 'admin' %}
+                <a href="{{ url_for('admin_orders') }}">Admin Panel</a>
+                {% endif %}
+
+                <a href="{{ url_for('feedback') }}">Feedback</a>
+                <a href="#contact">Contact</a>
+
+                <div class="user-info">
+                    {% if session.get('username') %}
+                    <span class="welcome-message">Welcome, {{ session['username'] }}</span>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <a href="{{ url_for('home') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+        
+        <div class="header">
+            <h1><i class="fas fa-seedling"></i> Fertilizer Recommendation</h1>
+            <p>Get personalized fertilizer recommendations based on your crop and soil nutrient levels</p>
+        </div>
+
+        <div class="form-section">
+            <form id="fertilizerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="cropname">Select Crop</label>
+                        <select id="cropname" name="cropname" required>
+                            <option value="">Choose a crop...</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Wheat">Wheat</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Sugarcane">Sugarcane</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Soybean">Soybean</option>
+                            <option value="Groundnut">Groundnut</option>
+                            <option value="Jowar">Jowar</option>
+                            <option value="Tomato">Tomato</option>
+                            <option value="Potato">Potato</option>
+                            <option value="Onion">Onion</option>
+                            <option value="Cabbage">Cabbage</option>
+                            <option value="Cauliflower">Cauliflower</option>
+                            <option value="Brinjal">Brinjal</option>
+                            <option value="Okra">Okra</option>
+                            <option value="Chilli">Chilli</option>
+                            <option value="Cucumber">Cucumber</option>
+                            <option value="Pumpkin">Pumpkin</option>
+                            <option value="Watermelon">Watermelon</option>
+                            <option value="Muskmelon">Muskmelon</option>
+                            <option value="Carrot">Carrot</option>
+                            <option value="Radish">Radish</option>
+                            <option value="Beetroot">Beetroot</option>
+                            <option value="Spinach">Spinach</option>
+                            <option value="Lettuce">Lettuce</option>
+                            <option value="Coriander">Coriander</option>
+                            <option value="Mint">Mint</option>
+                            <option value="Basil">Basil</option>
+                            <option value="Parsley">Parsley</option>
+                            <option value="Dill">Dill</option>
+                        </select>
+                        <small>Select the crop you want to grow</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nitrogen">Nitrogen (N) - ppm</label>
+                        <input type="number" id="nitrogen" name="nitrogen" min="0" max="300" step="1" required>
+                        <small>Current nitrogen level in your soil</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phosphorous">Phosphorus (P) - ppm</label>
+                        <input type="number" id="phosphorous" name="phosphorous" min="0" max="150" step="1" required>
+                        <small>Current phosphorus level in your soil</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pottasium">Potassium (K) - ppm</label>
+                        <input type="number" id="pottasium" name="pottasium" min="0" max="250" step="1" required>
+                        <small>Current potassium level in your soil</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-calculator"></i>
+                    Get Fertilizer Recommendation
+                </button>
+            </form>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="result-header">
+                <h3>Fertilizer Analysis Results</h3>
+            </div>
+            <div id="resultsContent">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('fertilizerForm');
+        const submitBtn = form.querySelector('.submit-btn');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsContent = document.getElementById('resultsContent');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/fertilizer-predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    showError(data.error || 'Failed to get fertilizer recommendation');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to get fertilizer recommendation. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-calculator"></i> Get Fertilizer Recommendation';
+            }
+        });
+
+        function displayResults(data) {
+            const { recommendation, nutrient_analysis, primary_deficiency } = data;
+            
+            let nutrientItems = '';
+            Object.entries(nutrient_analysis).forEach(([nutrient, values]) => {
+                const isDeficient = Math.abs(values.difference) > 10;
+                const isHigh = values.difference < -10;
+                let className = 'nutrient-item';
+                
+                if (isDeficient) {
+                    className += isHigh ? ' deficiency-high' : ' deficiency-highlight';
+                }
+                
+                nutrientItems += `
+                    <div class="${className}">
+                        <div class="nutrient-name">${nutrient.charAt(0).toUpperCase() + nutrient.slice(1)}</div>
+                        <div class="nutrient-values">
+                            Current: ${values.current} ppm<br>
+                            Recommended: ${values.recommended} ppm<br>
+                            Difference: ${values.difference > 0 ? '+' : ''}${values.difference} ppm
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsContent.innerHTML = `
+                <div class="nutrient-analysis">
+                    <h4>Nutrient Analysis</h4>
+                    <div class="nutrient-grid">
+                        ${nutrientItems}
+                    </div>
+                    <p><strong>Primary Deficiency:</strong> ${primary_deficiency}</p>
+                </div>
+                
+                <div class="fertilizer-recommendation">
+                    ${recommendation}
+                </div>
+            `;
+            
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showError(message) {
+            resultsContent.innerHTML = `<div class="error">${message}</div>`;
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Mobile menu toggle
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Mobile dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                const dropdownBtn = dropdown.querySelector('.dropdown-btn');
+                
+                dropdownBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Close other dropdowns in mobile
+                    if (window.innerWidth <= 992) {
+                        dropdowns.forEach(otherDropdown => {
+                            if (otherDropdown !== dropdown) {
+                                otherDropdown.classList.remove('active');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        dropdown.classList.toggle('active');
+                    }
+                });
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                const navLinks = document.querySelector('.nav-links');
+                const menuToggle = document.querySelector('.menu-toggle');
+                
+                if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+                    navLinks.classList.remove('active');
+                    
+                    // Close all dropdowns
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 992) {
+                    document.querySelector('.nav-links').classList.remove('active');
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

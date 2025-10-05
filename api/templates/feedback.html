@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback | AgriFarm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background-color: var(--light-bg);
+        color: var(--text-dark);
+      }
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        transition: all 0.3s ease;
+      }
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+      }
+      .nav-links {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary-color);
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      /* Dropdown Menu Styles */
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-btn {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .dropdown-btn:hover {
+        color: var(--primary-color);
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        min-width: 200px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        z-index: 1000;
+        padding: 0.5rem 0;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+        animation: dropdownSlide 0.3s ease;
+      }
+
+      @keyframes dropdownSlide {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 0.6rem 1rem;
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 0.9rem;
+        border-radius: 0;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown-content a:hover {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--primary-color);
+        padding-left: 1.2rem;
+      }
+
+      .dropdown-content a::after {
+        display: none;
+      }
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: var(--dark-green);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .menu-toggle:hover {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--primary-color);
+      }
+
+      /* Responsive Navigation */
+      @media (max-width: 1200px) {
+        .nav-links {
+          gap: 0.3rem;
+        }
+        
+        .nav-links a {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.85rem;
+        }
+
+        .user-info {
+          margin-left: 0.5rem;
+          padding-left: 0.5rem;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .menu-toggle {
+          display: block;
+        }
+
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 1.5rem;
+          flex-direction: column;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+          border-radius: 0 0 20px 20px;
+          backdrop-filter: blur(10px);
+          gap: 0;
+        }
+
+        .nav-links.active {
+          display: flex;
+          animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .nav-links a {
+          width: 100%;
+          padding: 1rem;
+          text-align: left;
+          border-radius: 12px;
+          margin-bottom: 0.5rem;
+          font-size: 1rem;
+        }
+
+        .dropdown {
+          width: 100%;
+        }
+
+        .dropdown-btn {
+          width: 100%;
+          padding: 1rem;
+          text-align: left;
+          justify-content: space-between;
+          border-radius: 12px;
+          margin-bottom: 0.5rem;
+        }
+
+        .dropdown-content {
+          position: static;
+          display: none;
+          box-shadow: none;
+          background: rgba(76, 175, 80, 0.05);
+          border-radius: 12px;
+          margin-top: 0.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .dropdown.active .dropdown-content {
+          display: block;
+        }
+
+        .user-info {
+          width: 100%;
+          justify-content: center;
+          border-left: none;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+          padding-top: 1rem;
+          margin-top: 1rem;
+          margin-left: 0;
+        }
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 2rem;
+        color: var(--text-dark);
+      }
+      .user-info a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        background: rgba(76, 175, 80, 0.1);
+      }
+      .user-info a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+      .user-info a:hover::after {
+        width: 100%;
+      }
+      .user-info a:hover {
+        background: rgba(76, 175, 80, 0.2);
+      }
+      .welcome-message {
+        font-weight: 500;
+        color: var(--dark-green);
+        margin-right: 0.5rem;
+      }
+      @media (max-width: 768px) {
+        .user-info {
+          margin-left: 0;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%;
+          padding: 1rem 0;
+        }
+        .user-info a {
+          width: 100%;
+          text-align: left;
+        }
+      }
+      /* Feedback-specific styles below */
+      .container { max-width: 500px; margin: 60px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 30px; }
+      h1 { color: #388e3c; text-align: center; }
+      form { display: flex; flex-direction: column; gap: 1.5rem; }
+      textarea { padding: 1rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; resize: vertical; min-height: 120px; }
+      button { background: #388e3c; color: #fff; border: none; border-radius: 8px; padding: 1rem; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.3s; }
+      button:hover { background: #2e7d32; }
+      .msg { text-align: center; color: #388e3c; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+  <header>
+    <nav class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">🌱</div>
+        AgriFarm
+      </a>
+      <button class="menu-toggle">☰</button>
+      <div class="nav-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        
+        <div class="dropdown">
+          <button class="dropdown-btn">
+            Farm Tools <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-content">
+            <a href="#crop-recommendation">Crop Recommendation</a>
+            <a href="{{ url_for('fertilizer_recommendation') }}">Fertilizer Guide</a>
+            <a href="{{ url_for('weather') }}">Weather Forecast</a>
+            <a href="{{ url_for('chatbot_page') }}">AgriBot Assistant</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button class="dropdown-btn">
+            Marketplace <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-content">
+            <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
+            <a href="{{ url_for('marketplace_view') }}">Buy & Sell</a>
+            <a href="{{ url_for('view_orders') }}">My Orders</a>
+          </div>
+        </div>
+
+        {% if session.get('role') == 'admin' %}
+        <a href="{{ url_for('admin_orders') }}">Admin Panel</a>
+        {% endif %}
+
+        <a href="{{ url_for('feedback') }}">Feedback</a>
+        <a href="#contact">Contact</a>
+
+        <div class="user-info">
+          {% if session.get('username') %}
+          <span class="welcome-message">Welcome, {{ session['username'] }}</span>
+          <a href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+          <a href="{{ url_for('login') }}">Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+  </header>
+    <div class="container">
+        <h1>Feedback</h1>
+        {% if msg %}
+        <div class="msg">{{ msg }}</div>
+        {% endif %}
+        <form method="POST">
+            <textarea name="message" placeholder="Enter your feedback here..." required></textarea>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+
+    <script>
+      // Mobile menu toggle
+      document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+
+      // Mobile dropdown functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        
+        dropdowns.forEach(dropdown => {
+          const dropdownBtn = dropdown.querySelector('.dropdown-btn');
+          
+          dropdownBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Close other dropdowns in mobile
+            if (window.innerWidth <= 992) {
+              dropdowns.forEach(otherDropdown => {
+                if (otherDropdown !== dropdown) {
+                  otherDropdown.classList.remove('active');
+                }
+              });
+              
+              // Toggle current dropdown
+              dropdown.classList.toggle('active');
+            }
+          });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+          const navLinks = document.querySelector('.nav-links');
+          const menuToggle = document.querySelector('.menu-toggle');
+          
+          if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+            navLinks.classList.remove('active');
+            
+            // Close all dropdowns
+            dropdowns.forEach(dropdown => {
+              dropdown.classList.remove('active');
+            });
+          }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+          if (window.innerWidth > 992) {
+            document.querySelector('.nav-links').classList.remove('active');
+            dropdowns.forEach(dropdown => {
+              dropdown.classList.remove('active');
+            });
+          }
+        });
+      });
+    </script>
+</body>
+</html>

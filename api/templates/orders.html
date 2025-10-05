@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Orders | AgriFarm</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        min-height: 100vh;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      /* Mobile Menu Toggle */
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--dark-green);
+        cursor: pointer;
+      }
+
+      /* User Info Styles */
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 2rem;
+        color: var(--text-dark);
+      }
+
+      .user-info a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      .user-info a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .user-info a:hover::after {
+        width: 100%;
+      }
+
+      .user-info a:hover {
+        background: rgba(76, 175, 80, 0.2);
+      }
+
+      .welcome-message {
+        font-weight: 500;
+        color: var(--dark-green);
+        margin-right: 0.5rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .page-title {
+        color: var(--dark-green);
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .order-list {
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .order-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+      }
+
+      .order-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .order-title {
+        color: var(--dark-green);
+        font-size: 1.3rem;
+        margin: 0;
+      }
+
+      .order-status {
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--secondary-color);
+      }
+
+      .order-details {
+        color: var(--text-dark);
+        line-height: 1.6;
+      }
+
+      .order-details p {
+        margin: 0.5rem 0;
+      }
+
+      .order-price {
+        font-size: 1.2rem;
+        color: var(--secondary-color);
+        font-weight: 700;
+        margin-top: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 1rem;
+          flex-direction: column;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+
+        .user-info {
+          margin-left: 0;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%;
+          padding: 1rem 0;
+        }
+
+        .user-info a {
+          width: 100%;
+          text-align: left;
+        }
+
+        .container {
+          margin: 1rem;
+          padding: 1.5rem;
+        }
+
+        .order-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="nav-container">
+        <a href="/" class="logo">
+          <div class="logo-icon">🌱</div>
+          AgriFarm
+        </a>
+        <button class="menu-toggle">☰</button>
+        <button class="menu-toggle">☰</button>
+
+        <div class="nav-links">
+          <a href="{{ url_for('home') }}">Home</a>
+          
+          <div class="dropdown">
+            <button class="dropdown-btn">
+              Farm Tools <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="#crop-recommendation">Crop Recommendation</a>
+              <a href="{{ url_for('fertilizer_recommendation') }}">Fertilizer Guide</a>
+              <a href="{{ url_for('weather') }}">Weather Forecast</a>
+              <a href="{{ url_for('chatbot_page') }}">AgriBot Assistant</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="dropdown-btn">
+              Marketplace <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
+              <a href="{{ url_for('marketplace_view') }}">Buy & Sell</a>
+              <a href="{{ url_for('view_orders') }}">My Orders</a>
+            </div>
+          </div>
+
+          {% if session.get('role') == 'admin' %}
+          <a href="{{ url_for('admin_orders') }}">Admin Panel</a>
+          {% endif %}
+
+          <a href="{{ url_for('feedback') }}">Feedback</a>
+          <a href="#contact">Contact</a>
+          <div class="user-info">
+            {% if session.get('username') %}
+            <span class="welcome-message">Welcome, {{ session['username'] }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <h1 class="page-title">My Orders</h1>
+      <div class="order-list">
+        {% for order in orders %}
+        <div class="order-card">
+          <div class="order-header">
+            <h3 class="order-title">{{ order.item.name }}</h3>
+            <span class="order-status">{{ order.status }}</span>
+          </div>
+          <div class="order-details">
+            <p>{{ order.item.description }}</p>
+            <p class="order-price">₹{{ order.item.price }}</p>
+            <p><strong>Delivery Address:</strong> {{ order.address }}</p>
+            <p><strong>Contact Number:</strong> {{ order.phone }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <script>
+      // Mobile menu toggle
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+
+      menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buy Item | AgriFarm</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        min-height: 100vh;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: var(--dark-green);
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .item-details {
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .item-image {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        border: 3px solid var(--primary-color);
+      }
+
+      .item-info {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+      }
+
+      .item-info strong {
+        color: var(--dark-green);
+      }
+
+      .price-tag {
+        font-size: 1.8rem;
+        color: var(--secondary-color);
+        font-weight: 700;
+        margin: 1.5rem 0;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--dark-green);
+        font-weight: 500;
+      }
+
+      input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+        outline: none;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 1rem;
+        background: var(--accent-color);
+        color: var(--text-dark);
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button[type="submit"]:hover {
+        background: #ffd54f;
+        transform: scale(1.02);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 1rem;
+          padding: 1.5rem;
+        }
+
+        .item-image {
+          height: 250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="nav-container">
+        <a href="/" class="logo">
+          <div class="logo-icon">🌱</div>
+          AgriFarm
+        </a>
+      </nav>
+    </header>
+
+    <div class="container">
+      <h2>Complete Your Purchase</h2>
+      {% if confirmation %}
+      <div class="item-details">
+        <h3 style="color: var(--primary-color); text-align: center;">Order placed successfully!<br>Thank you for your purchase. You will receive your item soon. <br>Payment: Cash on Delivery.</h3>
+        <a href="{{ url_for('marketplace_view') }}" style="display: block; text-align: center; margin-top: 2rem; color: var(--secondary-color); font-weight: bold;">Back to Marketplace</a>
+      </div>
+      {% elif item %}
+      <div class="item-details">
+        <img
+          class="item-image"
+          src="{{ item.image_url }}"
+          alt="{{ item.name }}"
+        />
+        <p class="item-info"><strong>Product:</strong> {{ item.name }}</p>
+        <p class="item-info">
+          <strong>Description:</strong> {{ item.description }}
+        </p>
+        <div class="price-tag">
+          <i class="fas fa-tag"></i> ₹{{ item.price }}
+        </div>
+      </div>
+
+      <form method="POST">
+        <div class="form-group">
+          <label for="address">Delivery Address</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            placeholder="Enter full delivery address"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="phone">Contact Number</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="Enter your contact number"
+            required
+          />
+        </div>
+        <button type="submit">Confirm Purchase</button>
+      </form>
+      {% else %}
+      <p class="item-info">Item not found.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

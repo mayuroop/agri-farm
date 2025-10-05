@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | AgriFarm</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        min-height: 100vh;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .register-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .register-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      .register-title {
+        text-align: center;
+        color: var(--dark-green);
+        margin-bottom: 2rem;
+        font-size: 2rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--dark-green);
+        font-weight: 500;
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .input-field:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+        outline: none;
+      }
+
+      .register-button {
+        width: 100%;
+        padding: 1rem;
+        background: var(--accent-color);
+        color: var(--text-dark);
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .register-button:hover {
+        background: #ffd54f;
+        transform: scale(1.02);
+      }
+
+      .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--text-dark);
+      }
+
+      .login-link a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .login-link a:hover {
+        color: var(--primary-color);
+      }
+
+      @media (max-width: 768px) {
+        .register-card {
+          padding: 2rem;
+        }
+
+        .register-title {
+          font-size: 1.8rem;
+        }
+      }
+      /* Add these new styles */
+      .message-container {
+        max-width: 500px;
+        margin: 1rem auto;
+        padding: 0 1rem;
+      }
+
+      .response-message {
+        padding: 1rem;
+        border-radius: 10px;
+        margin: 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--light-bg);
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .response-message.success {
+        border-color: var(--primary-color);
+        background: rgba(76, 175, 80, 0.1);
+      }
+
+      .response-message.error {
+        border-color: #e53935;
+        background: rgba(229, 57, 53, 0.1);
+      }
+
+      .response-message.warning {
+        border-color: #ffa000;
+        background: rgba(255, 160, 0, 0.1);
+      }
+
+      .response-message.info {
+        border-color: #1976d2;
+        background: rgba(25, 118, 210, 0.1);
+      }
+
+      .message-icon {
+        font-size: 1.5rem;
+      }
+
+      .message-content {
+        flex: 1;
+      }
+
+      .close-message {
+        cursor: pointer;
+        padding: 0 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="nav-container">
+        <a href="/" class="logo">
+          <div class="logo-icon">🌱</div>
+          AgriFarm
+        </a>
+      </nav>
+    </header>
+
+    <div class="register-container">
+      <div class="register-card">
+        <h1 class="register-title">Create Your Account</h1>
+        <form method="POST" action="{{ url_for('register') }}">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="confirm_password">Confirm Password</label>
+            <input
+              type="password"
+              id="confirm_password"
+              name="confirm_password"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <button type="submit" class="register-button">Register Now</button>
+        </form>
+
+        <div class="login-link">
+          Already have an account?
+          <a href="{{ url_for('login') }}">Login here</a>
+        </div>
+      </div>
+    </div>
+    <div class="message-container">
+        {% if msg %}
+        <div class="response-message {{ msg.type if msg.type else 'info' }}">
+            <i class="fas 
+                {% if msg.type == 'success' %}fa-check-circle
+                {% elif msg.type == 'error' %}fa-times-circle
+                {% elif msg.type == 'warning' %}fa-exclamation-circle
+                {% else %}fa-info-circle{% endif %} 
+                message-icon"></i>
+            <div class="message-content">{{ msg }}</div>
+            <i class="fas fa-times close-message" onclick="this.parentElement.style.display='none'"></i>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Add auto-hide functionality for messages
+    setTimeout(() => {
+        const messages = document.querySelectorAll('.response-message');
+        messages.forEach(msg => {
+            msg.style.display = 'none';
+        });
+    }, 5000); // Hide messages after 5 seconds
+</script>
+  </body>
+</html>

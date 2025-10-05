@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Forecast | AgriFarm</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        min-height: 100vh;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .weather-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+      }
+
+      .search-box {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+      }
+
+      .search-form {
+        display: flex;
+        gap: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+        outline: none;
+      }
+
+      .search-button {
+        padding: 1rem 2rem;
+        background: var(--accent-color);
+        color: var(--text-dark);
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .search-button:hover {
+        background: #ffd54f;
+        transform: scale(1.02);
+      }
+
+      .weather-cards {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+
+      .weather-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .card-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .location {
+        color: var(--dark-green);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .current-status {
+        color: var(--secondary-color);
+        font-weight: 500;
+      }
+
+      .weather-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .weather-item {
+        text-align: center;
+        padding: 1rem;
+        background: var(--light-bg);
+        border-radius: 10px;
+      }
+
+      .weather-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--secondary-color);
+      }
+
+      .weather-label {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        margin-bottom: 0.3rem;
+      }
+
+      .weather-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark-green);
+      }
+
+      .forecast-section {
+        margin-top: 2rem;
+      }
+
+      .forecast-title {
+        color: var(--dark-green);
+        margin-bottom: 1rem;
+      }
+
+      .forecast-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .weather-container {
+          padding: 0 1rem;
+        }
+
+        .search-form {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="nav-container">
+        <a href="/" class="logo">
+          <div class="logo-icon">🌱</div>
+          AgriFarm
+        </a>
+        <button class="menu-toggle">☰</button>
+
+        <div class="nav-links">
+          <a href="{{ url_for('home') }}">Home</a>
+          
+          <div class="dropdown">
+            <button class="dropdown-btn">
+              Farm Tools <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="#crop-recommendation">Crop Recommendation</a>
+              <a href="{{ url_for('fertilizer_recommendation') }}">Fertilizer Guide</a>
+              <a href="{{ url_for('weather') }}">Weather Forecast</a>
+              <a href="{{ url_for('chatbot_page') }}">AgriBot Assistant</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="dropdown-btn">
+              Marketplace <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
+              <a href="{{ url_for('marketplace_view') }}">Buy & Sell</a>
+              <a href="{{ url_for('view_orders') }}">My Orders</a>
+            </div>
+          </div>
+
+          {% if session.get('role') == 'admin' %}
+          <a href="{{ url_for('admin_orders') }}">Admin Panel</a>
+          {% endif %}
+
+          <a href="{{ url_for('feedback') }}">Feedback</a>
+          <a href="#contact">Contact</a>
+
+          <div class="user-info">
+            {% if session.get('username') %}
+            <span class="welcome-message">Welcome, {{ session['username'] }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="weather-container">
+      <div class="search-box">
+        <form class="search-form" method="POST">
+          <input
+            type="text"
+            name="city"
+            placeholder="Enter city name"
+            class="search-input"
+            required
+          />
+          <button type="submit" class="search-button">Search</button>
+        </form>
+      </div>
+
+      {% if current_weather %}
+      <div class="weather-cards">
+        <!-- Current Weather Card -->
+        <div class="weather-card">
+          <div class="card-header">
+            <h2 class="location">{{ city }}</h2>
+            <p class="current-status">{{ current_weather.condition.text }}</p>
+          </div>
+
+          <div class="weather-grid">
+            <div class="weather-item">
+              <i class="fas fa-thermometer-half weather-icon"></i>
+              <div class="weather-label">Temperature</div>
+              <div class="weather-value">{{ current_weather.temp_c }}°C</div>
+            </div>
+
+            <div class="weather-item">
+              <i class="fas fa-tint weather-icon"></i>
+              <div class="weather-label">Humidity</div>
+              <div class="weather-value">{{ current_weather.humidity }}%</div>
+            </div>
+
+            <div class="weather-item">
+              <i class="fas fa-wind weather-icon"></i>
+              <div class="weather-label">Wind Speed</div>
+              <div class="weather-value">
+                {{ current_weather.wind_kph }} km/h
+              </div>
+            </div>
+
+            <div class="weather-item">
+              <i class="fas fa-cloud-rain weather-icon"></i>
+              <div class="weather-label">Precipitation</div>
+              <div class="weather-value">
+                {{ current_weather.precip_mm }} mm
+              </div>
+            </div>
+          </div>
+
+          <!-- Tomorrow's Forecast -->
+          <div class="forecast-section">
+            <h3 class="forecast-title">Tomorrow's Forecast</h3>
+            <div class="forecast-grid">
+              <div class="weather-item">
+                <i class="fas fa-temperature-high weather-icon"></i>
+                <div class="weather-label">Max Temp</div>
+                <div class="weather-value">
+                  {{ forecast_weather.day.maxtemp_c }}°C
+                </div>
+              </div>
+
+              <div class="weather-item">
+                <i class="fas fa-temperature-low weather-icon"></i>
+                <div class="weather-label">Min Temp</div>
+                <div class="weather-value">
+                  {{ forecast_weather.day.mintemp_c }}°C
+                </div>
+              </div>
+
+              <div class="weather-item">
+                <i class="fas fa-sun weather-icon"></i>
+                <div class="weather-label">Condition</div>
+                <div class="weather-value">
+                  {{ forecast_weather.day.condition.text }}
+                </div>
+              </div>
+
+              <div class="weather-item">
+                <i class="fas fa-umbrella weather-icon"></i>
+                <div class="weather-label">Rain Chance</div>
+                <div class="weather-value">
+                  {{ forecast_weather.day.daily_chance_of_rain }}%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Farming Advisory Card -->
+        <div class="weather-card">
+          <h2 class="location">Farming Advisory</h2>
+          <div class="weather-grid">
+            <div class="weather-item">
+              <i class="fas fa-seedling weather-icon"></i>
+              <div class="weather-label">Soil Moisture</div>
+              <div class="weather-value">Optimal</div>
+            </div>
+
+            <div class="weather-item">
+              <i class="fas fa-sun weather-icon"></i>
+              <div class="weather-label">UV Index</div>
+              <div class="weather-value">{{ current_weather.uv }}</div>
+            </div>
+
+            <div class="weather-item">
+              <i class="fas fa-clock weather-icon"></i>
+              <div class="weather-label">Sunrise</div>
+              <div class="weather-value">
+                {{ forecast_weather.astro.sunrise }}
+              </div>
+            </div>
+
+            <div class="weather-item">
+              <i class="fas fa-moon weather-icon"></i>
+              <div class="weather-label">Sunset</div>
+              <div class="weather-value">
+                {{ forecast_weather.astro.sunset }}
+              </div>
+            </div>
+          </div>
+
+          <div class="advisory-note">
+            <p>
+              🌱 <strong>Farming Tip:</strong> Current weather conditions are
+              ideal for outdoor planting activities. Maintain irrigation
+              schedules due to low precipitation.
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

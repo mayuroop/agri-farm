@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketplace | AgriFarm</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: var(--light-bg);
+        color: var(--text-dark);
+      }
+
+      /* Header Styles */
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary-color);
+      }
+
+      /* Marketplace Content */
+      .marketplace-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 2rem;
+      }
+
+      .page-title {
+        text-align: center;
+        color: var(--dark-green);
+        margin-bottom: 3rem;
+        font-size: 2.5rem;
+      }
+
+      .item-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 1rem;
+      }
+
+      .item-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+      }
+
+      .item-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .item-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-bottom: 3px solid var(--primary-color);
+      }
+
+      .item-details {
+        padding: 1.5rem;
+      }
+
+      .item-name {
+        color: var(--dark-green);
+        margin-bottom: 0.5rem;
+        font-size: 1.3rem;
+      }
+
+      .item-description {
+        color: #666;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .item-price {
+        color: var(--secondary-color);
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+      }
+
+      .buy-button {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background: var(--accent-color);
+        color: var(--text-dark);
+        text-align: center;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .buy-button:hover {
+        background: #ffd54f;
+        transform: scale(1.02);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .marketplace-container {
+          padding: 1rem;
+        }
+
+        .item-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .page-title {
+          font-size: 2rem;
+        }
+      }
+      @media (max-width: 768px) {
+        .user-info {
+          margin-left: 0;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%;
+          padding: 1rem 0;
+        }
+
+        .user-info a {
+          width: 100%;
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="nav-container">
+        <a href="/" class="logo">
+          <div class="logo-icon">🌱</div>
+          AgriFarm
+        </a>
+        <div class="nav-links">
+          <a href="{{ url_for('home') }}">Home</a>
+          <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
+          <a href="{{ url_for('marketplace_view') }}">Marketplace</a>
+          <a href="{{ url_for('weather') }}">Weather</a>
+          {% if session.get('role') == 'admin' %}
+          <a href="{{ url_for('admin_orders') }}">Admin Orders</a>
+          {% endif %}
+          <a href="{{ url_for('view_orders') }}">My Orders</a>
+          <div class="user-info">
+            {% if session.get('username') %}
+            <span class="welcome-message"
+              >Welcome, {{ session['username'] }}</span
+            >
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="marketplace-container">
+      <h1 class="page-title">AgriFarm Marketplace</h1>
+      {{ resp }}
+      <div class="item-grid">
+        {% for item in items %}
+        <div class="item-card">
+          <img
+            src="{{ item.image_url }}"
+            class="item-image"
+            alt="{{ item.name }}"
+          />
+          <div class="item-details">
+            <h3 class="item-name">{{ item.name }}</h3>
+            <p class="item-description">{{ item.description }}</p>
+            <p class="item-price">₹{{ item.price }}</p>
+            <a
+              href="{{ url_for('buy_item', iid=item.iid) }}"
+              class="buy-button"
+            >
+              Buy Now <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>

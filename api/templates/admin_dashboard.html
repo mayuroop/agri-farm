@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | AgriFarm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #388e3c;
+        --accent-color: #ffc107;
+        --dark-green: #2e7d32;
+        --light-bg: #f9f9f9;
+        --text-dark: #333;
+        --text-light: #ffffff;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background-color: var(--light-bg);
+        color: var(--text-dark);
+      }
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        transition: all 0.3s ease;
+      }
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+      .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+      .nav-links a:hover {
+        color: var(--primary-color);
+      }
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--dark-green);
+        cursor: pointer;
+      }
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 1rem;
+          flex-direction: column;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .nav-links.active {
+          display: flex;
+        }
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 2rem;
+        color: var(--text-dark);
+      }
+      .user-info a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        background: rgba(76, 175, 80, 0.1);
+      }
+      .user-info a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+      .user-info a:hover::after {
+        width: 100%;
+      }
+      .user-info a:hover {
+        background: rgba(76, 175, 80, 0.2);
+      }
+      .welcome-message {
+        font-weight: 500;
+        color: var(--dark-green);
+        margin-right: 0.5rem;
+      }
+      @media (max-width: 768px) {
+        .user-info {
+          margin-left: 0;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%;
+          padding: 1rem 0;
+        }
+        .user-info a {
+          width: 100%;
+          text-align: left;
+        }
+      }
+      /* Dashboard-specific styles below */
+      .container { max-width: 1000px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 30px; }
+      h1 { color: #388e3c; }
+      .metrics { display: flex; flex-wrap: wrap; gap: 2rem; margin-bottom: 2rem; }
+      .metric { background: #f9f9f9; border-radius: 8px; padding: 1.5rem; flex: 1 1 200px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+      .metric h2 { margin: 0 0 0.5rem 0; color: #2e7d32; font-size: 2.2rem; }
+      .metric p { margin: 0; color: #555; font-size: 1.1rem; }
+      .section { margin-bottom: 2rem; }
+      .section h3 { color: #388e3c; margin-bottom: 1rem; }
+      table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+      th, td { padding: 0.7rem; border-bottom: 1px solid #eee; text-align: left; }
+      th { background: #f4f4f9; color: #388e3c; }
+      tr:last-child td { border-bottom: none; }
+      .feedback { background: #f9f9f9; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+  <header>
+    <nav class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">🌱</div>
+        AgriFarm
+      </a>
+      <button class="menu-toggle">☰</button>
+      <div class="nav-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
+        <a href="{{ url_for('marketplace_view') }}">Marketplace</a>
+        <a href="{{ url_for('weather') }}">Weather</a>
+        <a href="{{ url_for('admin_orders') }}">Admin Orders</a>
+        <a href="{{ url_for('view_orders') }}">My Orders</a>
+        <a href="{{ url_for('feedback') }}">Feedback</a>
+        <div class="user-info">
+          {% if session.get('username') %}
+          <span class="welcome-message">Welcome, {{ session['username'] }}</span>
+          <a href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+          <a href="{{ url_for('login') }}">Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+  </header>
+    <div class="container">
+        <div class="metrics">
+            <div class="metric">
+                <h2>{{ total_users }}</h2>
+                <p>Total Users</p>
+            </div>
+            <div class="metric">
+                <h2>{{ total_items }}</h2>
+                <p>Total Items</p>
+            </div>
+            <div class="metric">
+                <h2>{{ total_orders }}</h2>
+                <p>Total Orders</p>
+            </div>
+            <div class="metric">
+                <h2>{{ total_registrations }}</h2>
+                <p>Registrations</p>
+            </div>
+            <div class="metric">
+                <h2>{{ failed_registrations }}</h2>
+                <p>Failed Registrations</p>
+            </div>
+            <div class="metric">
+                <h2>{{ total_logins }}</h2>
+                <p>Logins</p>
+            </div>
+            <div class="metric">
+                <h2>{{ failed_logins }}</h2>
+                <p>Failed Logins</p>
+            </div>
+            <div class="metric">
+                <h2>{{ total_orders_logged }}</h2>
+                <p>Order Attempts</p>
+            </div>
+            <div class="metric">
+                <h2>{{ failed_orders }}</h2>
+                <p>Failed Orders</p>
+            </div>
+        </div>
+        <div class="section">
+            <h3>Recent Admin Actions</h3>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Admin</th>
+                    <th>Details</th>
+                    <th>Time</th>
+                </tr>
+                {% for action in admin_actions %}
+                <tr>
+                    <td>{{ action.action }}</td>
+                    <td>{{ action.admin }}</td>
+                    <td>
+                        {% if action.action == 'add_item' %}
+                            Added: {{ action.item.name }}
+                        {% elif action.action == 'delete_item' %}
+                            Deleted Item ID: {{ action.item_id }}
+                        {% elif action.action == 'mark_done' %}
+                            Marked Order Done: {{ action.order_id }}
+                        {% endif %}
+                    </td>
+                    <td>{{ action.timestamp.strftime('%Y-%m-%d %H:%M:%S') if action.timestamp else '' }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="section">
+            <h3>Recent User Feedback</h3>
+            {% for fb in feedbacks %}
+            <div class="feedback">
+                <strong>{{ fb.username or 'Anonymous' }}</strong> ({{ fb.timestamp.strftime('%Y-%m-%d %H:%M:%S') if fb.timestamp else '' }})<br>
+                {{ fb.message }}
+            </div>
+            {% else %}
+            <p>No feedback yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
