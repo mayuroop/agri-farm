@@ -10,12 +10,7 @@ import pickle
 import joblib
 import os
 import sys
-try:
-    import google.generativeai as genai
-    GENAI_AVAILABLE = True
-except ImportError:
-    GENAI_AVAILABLE = False
-    print("Google Generative AI not available - chatbot functionality will be limited")
+import google.generativeai as genai
 
 # Add the parent directory to the path to import utils
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -192,8 +187,7 @@ weather_base_url = 'http://api.weatherapi.com/v1/forecast.json'
 
 # Gemini API Configuration
 GEMINI_API_KEY = 'AIzaSyB2JMfq0VwAoUL3v3coyqRuevOwCgL0I9U'  # Free hardcoded API key
-if GENAI_AVAILABLE:
-    genai.configure(api_key=GEMINI_API_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize ML models
 crop_recommendation_model = None
@@ -204,46 +198,122 @@ class MockRandomForestModel:
     
     def __init__(self):
         self.crops = ['Rice', 'Wheat', 'Maize', 'Sugarcane', 'Cotton', 'Soybean', 'Groundnut', 'Jowar']
+        self.feature_names = ['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']
     
     def predict(self, X):
         """Predict crop based on input parameters"""
         n, p, k, temp, humidity, ph, rainfall = X[0]
         
-        # Simple rule-based logic for crop recommendation
-        if temp < 15:
-            return ['Wheat']
-        elif temp > 30:
-            if humidity > 70:
-                return ['Rice']
-            else:
-                return ['Cotton']
-        elif ph < 6.0:
-            if rainfall > 1000:
-                return ['Rice']
-            else:
-                return ['Maize']
-        elif ph > 8.0:
-            return ['Cotton']
-        elif n > 100 and p > 50 and k > 50:
-            return ['Sugarcane']
-        elif rainfall > 1200:
-            return ['Rice']
-        elif rainfall < 500:
-            return ['Jowar']
-        else:
-            return ['Maize']
+        # More sophisticated rule-based logic for crop recommendation
+        scores = {}
+        
+        # Rice scoring
+        rice_score = 0
+        if 20 <= temp <= 35: rice_score += 2
+        if 70 <= humidity <= 90: rice_score += 2
+        if 5.5 <= ph <= 7.0: rice_score += 1
+        if 1000 <= rainfall <= 2500: rice_score += 2
+        if 20 <= n <= 120: rice_score += 1
+        if 10 <= p <= 50: rice_score += 1
+        if 20 <= k <= 100: rice_score += 1
+        scores['Rice'] = rice_score
+        
+        # Wheat scoring
+        wheat_score = 0
+        if 15 <= temp <= 25: wheat_score += 2
+        if 40 <= humidity <= 70: wheat_score += 2
+        if 6.0 <= ph <= 7.5: wheat_score += 1
+        if 500 <= rainfall <= 1000: wheat_score += 2
+        if 50 <= n <= 120: wheat_score += 1
+        if 20 <= p <= 60: wheat_score += 1
+        if 30 <= k <= 80: wheat_score += 1
+        scores['Wheat'] = wheat_score
+        
+        # Maize scoring
+        maize_score = 0
+        if 18 <= temp <= 30: maize_score += 2
+        if 50 <= humidity <= 80: maize_score += 2
+        if 5.5 <= ph <= 7.5: maize_score += 1
+        if 600 <= rainfall <= 1200: maize_score += 2
+        if 60 <= n <= 150: maize_score += 1
+        if 20 <= p <= 80: maize_score += 1
+        if 40 <= k <= 120: maize_score += 1
+        scores['Maize'] = maize_score
+        
+        # Sugarcane scoring
+        sugarcane_score = 0
+        if 20 <= temp <= 35: sugarcane_score += 2
+        if 60 <= humidity <= 85: sugarcane_score += 2
+        if 6.0 <= ph <= 7.5: sugarcane_score += 1
+        if 1000 <= rainfall <= 2000: sugarcane_score += 2
+        if 80 <= n <= 200: sugarcane_score += 1
+        if 30 <= p <= 100: sugarcane_score += 1
+        if 60 <= k <= 150: sugarcane_score += 1
+        scores['Sugarcane'] = sugarcane_score
+        
+        # Cotton scoring
+        cotton_score = 0
+        if 20 <= temp <= 35: cotton_score += 2
+        if 40 <= humidity <= 80: cotton_score += 2
+        if 5.5 <= ph <= 8.0: cotton_score += 1
+        if 500 <= rainfall <= 1200: cotton_score += 2
+        if 40 <= n <= 120: cotton_score += 1
+        if 15 <= p <= 60: cotton_score += 1
+        if 30 <= k <= 100: cotton_score += 1
+        scores['Cotton'] = cotton_score
+        
+        # Soybean scoring
+        soybean_score = 0
+        if 15 <= temp <= 30: soybean_score += 2
+        if 50 <= humidity <= 80: soybean_score += 2
+        if 6.0 <= ph <= 7.0: soybean_score += 1
+        if 600 <= rainfall <= 1000: soybean_score += 2
+        if 30 <= n <= 100: soybean_score += 1
+        if 15 <= p <= 50: soybean_score += 1
+        if 20 <= k <= 80: soybean_score += 1
+        scores['Soybean'] = soybean_score
+        
+        # Groundnut scoring
+        groundnut_score = 0
+        if 20 <= temp <= 30: groundnut_score += 2
+        if 50 <= humidity <= 80: groundnut_score += 2
+        if 5.5 <= ph <= 7.0: groundnut_score += 1
+        if 500 <= rainfall <= 1000: groundnut_score += 2
+        if 20 <= n <= 80: groundnut_score += 1
+        if 10 <= p <= 40: groundnut_score += 1
+        if 20 <= k <= 60: groundnut_score += 1
+        scores['Groundnut'] = groundnut_score
+        
+        # Jowar scoring
+        jowar_score = 0
+        if 20 <= temp <= 35: jowar_score += 2
+        if 40 <= humidity <= 70: jowar_score += 2
+        if 6.0 <= ph <= 8.0: jowar_score += 1
+        if 400 <= rainfall <= 800: jowar_score += 2
+        if 30 <= n <= 80: jowar_score += 1
+        if 15 <= p <= 40: jowar_score += 1
+        if 20 <= k <= 60: jowar_score += 1
+        scores['Jowar'] = jowar_score
+        
+        # Return the crop with highest score
+        best_crop = max(scores, key=scores.get)
+        return [best_crop]
     
     def predict_proba(self, X):
-        """Return mock probabilities"""
+        """Return mock probabilities based on scoring"""
         prediction = self.predict(X)
         crop_index = self.crops.index(prediction[0])
-        proba = [0.1] * len(self.crops)
-        proba[crop_index] = 0.7
+        proba = [0.05] * len(self.crops)  # Base probability for all crops
+        proba[crop_index] = 0.75  # Higher probability for predicted crop
         return np.array([proba])
 
 try:
     # Load crop recommendation model
-    crop_recommendation_model_path = '../models/RandomForest.pkl'
+    # Get the absolute path to the models directory
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(current_dir)
+    crop_recommendation_model_path = os.path.join(parent_dir, 'models', 'RandomForest.pkl')
+    
     if os.path.exists(crop_recommendation_model_path):
         try:
             # Try loading with joblib first (recommended for scikit-learn models)
@@ -473,7 +543,8 @@ def get_ml_crop_recommendation(n, p, k, temperature, humidity, ph, rainfall):
                 confidence = 'Medium'
             else:
                 confidence = 'Low'
-        except:
+        except Exception as proba_error:
+            print(f"Error getting probabilities: {proba_error}")
             # If predict_proba is not available, use default confidence
             confidence_score = 85.0
             confidence = 'High'
@@ -489,15 +560,13 @@ def get_ml_crop_recommendation(n, p, k, temperature, humidity, ph, rainfall):
         
     except Exception as e:
         print(f"Error in ML crop recommendation: {e}")
+        print("Falling back to rule-based recommendation")
         return get_crop_recommendation(n, p, k, temperature, humidity, ph, rainfall)
 
 def get_gemini_response(user_message):
     """
     Get response from Gemini AI for farmer queries
     """
-    if not GENAI_AVAILABLE:
-        return "I'm sorry, but the AI chatbot is currently unavailable. Please try again later or contact our support team for assistance with your farming questions."
-    
     try:
         # Create the model
         model = genai.GenerativeModel('gemini-2.5-flash')
@@ -625,24 +694,57 @@ def crop_recommendation():
             if not all([n, p, k, temperature, humidity, ph, rainfall]):
                 return jsonify({'error': 'All fields are required'}), 400
             
+            # Convert to float and validate ranges
+            try:
+                n = float(n)
+                p = float(p)
+                k = float(k)
+                temperature = float(temperature)
+                humidity = float(humidity)
+                ph = float(ph)
+                rainfall = float(rainfall)
+            except ValueError:
+                return jsonify({'error': 'All fields must be valid numbers'}), 400
+            
+            # Validate reasonable ranges
+            if not (0 <= n <= 300) or not (0 <= p <= 200) or not (0 <= k <= 300):
+                return jsonify({'error': 'N, P, K values must be between 0-300, 0-200, 0-300 respectively'}), 400
+            
+            if not (-10 <= temperature <= 50):
+                return jsonify({'error': 'Temperature must be between -10°C and 50°C'}), 400
+            
+            if not (0 <= humidity <= 100):
+                return jsonify({'error': 'Humidity must be between 0% and 100%'}), 400
+            
+            if not (0 <= ph <= 14):
+                return jsonify({'error': 'pH must be between 0 and 14'}), 400
+            
+            if not (0 <= rainfall <= 5000):
+                return jsonify({'error': 'Rainfall must be between 0 and 5000 mm'}), 400
+            
             # Get recommendations using ML model if available, otherwise use rule-based
             recommendations = get_ml_crop_recommendation(n, p, k, temperature, humidity, ph, rainfall)
+            
+            # Determine model status
+            model_status = "ML Model" if not isinstance(crop_recommendation_model, MockRandomForestModel) else "Rule-based Fallback"
             
             return jsonify({
                 'success': True,
                 'recommendations': recommendations,
+                'model_status': model_status,
                 'input_data': {
-                    'n': float(n),
-                    'p': float(p),
-                    'k': float(k),
-                    'temperature': float(temperature),
-                    'humidity': float(humidity),
-                    'ph': float(ph),
-                    'rainfall': float(rainfall)
+                    'n': n,
+                    'p': p,
+                    'k': k,
+                    'temperature': temperature,
+                    'humidity': humidity,
+                    'ph': ph,
+                    'rainfall': rainfall
                 }
             })
             
         except Exception as e:
+            print(f"Error in crop recommendation: {e}")
             return jsonify({'error': f'Error processing recommendation: {str(e)}'}), 500
     
     return render_template('index.html')
@@ -924,7 +1026,7 @@ def logout():
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login','register', 'home']
+    allowed_routes = ['login','register', 'home', 'crop_recommendation', 'fertilizer_predict', 'weather', 'chatbot', 'chatbot_page', 'crop_prices_view', 'feedback']
     if 'user' not in session and request.endpoint not in allowed_routes:
         return redirect(url_for('login'))
 
