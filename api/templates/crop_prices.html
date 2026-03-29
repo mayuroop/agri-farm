@@ -1,708 +1,377 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crop Prices | AgriFarm</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <style>
-      :root {
-        --primary-color: #4caf50;
-        --secondary-color: #388e3c;
-        --accent-color: #ffc107;
-        --dark-green: #2e7d32;
-        --light-bg: #f9f9f9;
-        --text-dark: #333;
-        --text-light: #ffffff;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Poppins", sans-serif;
-      }
-
-      body {
-        background: linear-gradient(
-          135deg,
-          var(--primary-color),
-          var(--secondary-color)
-        );
-        min-height: 100vh;
-      }
-
-      header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        padding: 1rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-      }
-
-      .nav-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .logo {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--dark-green);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .logo-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--primary-color);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.5rem;
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .nav-links a {
-        color: var(--text-dark);
-        text-decoration: none;
-        font-weight: 500;
-        padding: 0.4rem 0.8rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        position: relative;
-        font-size: 0.9rem;
-        white-space: nowrap;
-      }
-
-      .nav-links a::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--primary-color);
-        transition: width 0.3s ease;
-      }
-
-      .nav-links a:hover::after {
-        width: 100%;
-      }
-
-      .nav-links a:hover {
-        color: var(--primary-color);
-        background: rgba(76, 175, 80, 0.1);
-      }
-
-      /* Dropdown Menu Styles */
-      .dropdown {
-        position: relative;
-        display: inline-block;
-      }
-
-      .dropdown-btn {
-        color: var(--text-dark);
-        text-decoration: none;
-        font-weight: 500;
-        padding: 0.4rem 0.8rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        position: relative;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        background: none;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-      }
-
-      .dropdown-btn:hover {
-        color: var(--primary-color);
-        background: rgba(76, 175, 80, 0.1);
-      }
-
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: white;
-        min-width: 200px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        border-radius: 12px;
-        z-index: 1000;
-        padding: 0.5rem 0;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-      }
-
-      .dropdown:hover .dropdown-content {
-        display: block;
-        animation: dropdownSlide 0.3s ease;
-      }
-
-      @keyframes dropdownSlide {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .dropdown-content a {
-        display: block;
-        padding: 0.6rem 1rem;
-        color: var(--text-dark);
-        text-decoration: none;
-        font-size: 0.9rem;
-        border-radius: 0;
-        transition: all 0.2s ease;
-      }
-
-      .dropdown-content a:hover {
-        background: rgba(76, 175, 80, 0.1);
-        color: var(--primary-color);
-        padding-left: 1.2rem;
-      }
-
-      .dropdown-content a::after {
-        display: none;
-      }
-
-      /* User Info Styles */
-      .user-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-left: 1rem;
-        padding-left: 1rem;
-        border-left: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      .welcome-message {
-        font-size: 0.9rem;
-        color: var(--text-dark);
-        font-weight: 500;
-      }
-
-      /* Mobile Menu Toggle */
-      .menu-toggle {
-        display: none;
-        background: none;
-        border: none;
-        font-size: 1.8rem;
-        color: var(--dark-green);
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-      }
-
-      .menu-toggle:hover {
-        background: rgba(76, 175, 80, 0.1);
-        color: var(--primary-color);
-      }
-
-      /* Responsive Navigation */
-      @media (max-width: 1200px) {
-        .nav-links {
-          gap: 0.3rem;
-        }
-        
-        .nav-links a {
-          padding: 0.3rem 0.6rem;
-          font-size: 0.85rem;
-        }
-
-        .user-info {
-          margin-left: 0.5rem;
-          padding-left: 0.5rem;
-        }
-      }
-
-      @media (max-width: 992px) {
-        .menu-toggle {
-          display: block;
-        }
-
-        .nav-links {
-          display: none;
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background: white;
-          padding: 1.5rem;
-          flex-direction: column;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-          border-radius: 0 0 20px 20px;
-          backdrop-filter: blur(10px);
-          gap: 0;
-        }
-
-        .nav-links.active {
-          display: flex;
-          animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .nav-links a {
-          width: 100%;
-          padding: 1rem;
-          text-align: left;
-          border-radius: 12px;
-          margin-bottom: 0.5rem;
-          font-size: 1rem;
-        }
-
-        .dropdown {
-          width: 100%;
-        }
-
-        .dropdown-btn {
-          width: 100%;
-          padding: 1rem;
-          text-align: left;
-          justify-content: space-between;
-          border-radius: 12px;
-          margin-bottom: 0.5rem;
-        }
-
-        .dropdown-content {
-          position: static;
-          display: none;
-          box-shadow: none;
-          background: rgba(76, 175, 80, 0.05);
-          border-radius: 12px;
-          margin-top: 0.5rem;
-          margin-bottom: 1rem;
-        }
-
-        .dropdown.active .dropdown-content {
-          display: block;
-        }
-
-        .user-info {
-          width: 100%;
-          justify-content: center;
-          border-left: none;
-          border-top: 1px solid rgba(0, 0, 0, 0.1);
-          padding-top: 1rem;
-          margin-top: 1rem;
-          margin-left: 0;
-        }
-      }
-
-      /* Mobile Menu Toggle */
-      .menu-toggle {
-        display: none;
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: var(--dark-green);
-        cursor: pointer;
-      }
-
-      /* User Info Styles */
-      .user-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-left: 2rem;
-        color: var(--text-dark);
-      }
-
-      .user-info a {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        position: relative;
-        background: rgba(76, 175, 80, 0.1);
-      }
-
-      .user-info a::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--primary-color);
-        transition: width 0.3s ease;
-      }
-
-      .user-info a:hover::after {
-        width: 100%;
-      }
-
-      .user-info a:hover {
-        background: rgba(76, 175, 80, 0.2);
-      }
-
-      .welcome-message {
-        font-weight: 500;
-        color: var(--dark-green);
-        margin-right: 0.5rem;
-      }
-
-      main {
-        max-width: 1400px;
-        margin: 2rem auto;
-        padding: 0 2rem;
-      }
-
-      .search-container {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        margin-bottom: 2rem;
-      }
-
-      .search-form {
-        display: flex;
-        gap: 1rem;
-        max-width: 600px;
-        margin: 0 auto;
-      }
-
-      .search-input {
-        flex: 1;
-        padding: 1rem;
-        border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-      }
-
-      .search-input:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
-        outline: none;
-      }
-
-      .search-button {
-        padding: 1rem 2rem;
-        background: var(--accent-color);
-        color: var(--text-dark);
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .search-button:hover {
-        background: #ffd54f;
-        transform: scale(1.02);
-      }
-
-      .price-cards {
-        display: grid;
-        gap: 2rem;
-      }
-
-      .crop-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        transition: transform 0.3s ease;
-      }
-
-      .crop-card:hover {
-        transform: translateY(-5px);
-      }
-
-      .crop-header {
-        margin-bottom: 1.5rem;
-      }
-
-      .crop-title {
-        color: var(--dark-green);
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .price-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .price-item {
-        padding: 1rem;
-        background: var(--light-bg);
-        border-radius: 10px;
-      }
-
-      .price-label {
-        color: var(--secondary-color);
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-      }
-
-      .price-value {
-        color: var(--text-dark);
-        font-weight: 500;
-      }
-
-      @media (max-width: 768px) {
-        .menu-toggle {
-          display: block;
-        }
-
-        .nav-links {
-          display: none;
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background: white;
-          padding: 1rem;
-          flex-direction: column;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-links.active {
-          display: flex;
-        }
-
-        .user-info {
-          margin-left: 0;
-          flex-direction: column;
-          align-items: flex-start;
-          width: 100%;
-          padding: 1rem 0;
-        }
-
-        .user-info a {
-          width: 100%;
-          text-align: left;
-        }
-
-        main {
-          padding: 0 1rem;
-        }
-
-        .search-form {
-          flex-direction: column;
-        }
-
-        .price-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <nav class="nav-container">
-        <a href="/" class="logo">
-          <div class="logo-icon">🌱</div>
-          AgriFarm
-        </a>
-        <button class="menu-toggle">☰</button>
-        <button class="menu-toggle">☰</button>
-
-        <div class="nav-links">
-          <a href="{{ url_for('home') }}">Home</a>
-          
-          <div class="dropdown">
-            <button class="dropdown-btn">
-              Farm Tools <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="dropdown-content">
-              <a href="#crop-recommendation">Crop Recommendation</a>
-              <a href="{{ url_for('fertilizer_recommendation') }}">Fertilizer Guide</a>
-              <a href="{{ url_for('weather') }}">Weather Forecast</a>
-              <a href="{{ url_for('chatbot_page') }}">AgriBot Assistant</a>
-            </div>
-          </div>
-
-          <div class="dropdown">
-            <button class="dropdown-btn">
-              Marketplace <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="dropdown-content">
-              <a href="{{ url_for('crop_prices_view') }}">Crop Prices</a>
-              <a href="{{ url_for('marketplace_view') }}">Buy & Sell</a>
-              <a href="{{ url_for('view_orders') }}">My Orders</a>
-            </div>
-          </div>
-
-          {% if session.get('role') == 'admin' %}
-          <a href="{{ url_for('admin_orders') }}">Admin Panel</a>
-          {% endif %}
-
-          <a href="{{ url_for('feedback') }}">Feedback</a>
-          <a href="#contact">Contact</a>
-          <div class="user-info">
-            {% if session.get('username') %}
-            <span class="welcome-message">Welcome, {{ session['username'] }}</span>
-            <a href="{{ url_for('logout') }}">Logout</a>
-            {% else %}
-            <a href="{{ url_for('login') }}">Login</a>
-            {% endif %}
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crop Prices | AgriFarm</title>
+  <meta name="description" content="Live mandi crop prices for Maharashtra districts — data.gov.in" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --g: #16a34a; --gd: #14532d; --gl: #bbf7d0; --gs: #f0fdf4;
+      --acc: #f59e0b; --blue: #3b82f6; --red: #ef4444;
+      --txt: #111827; --muted: #6b7280; --bdr: #e5e7eb;
+      --card: #fff; --sh: 0 4px 24px rgba(0,0,0,.07); --r: 14px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#052e16,#14532d 60%,#166534) fixed;min-height:100vh;color:var(--txt);}
+
+    /* NAV */
+    header{background:rgba(255,255,255,.97);backdrop-filter:blur(12px);box-shadow:0 2px 16px rgba(0,0,0,.07);position:sticky;top:0;z-index:900;}
+    .nav{max-width:1380px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:.85rem 2rem;}
+    .logo{font-size:1.5rem;font-weight:800;color:var(--gd);text-decoration:none;display:flex;align-items:center;gap:.45rem;}
+    .logo-icon{width:36px;height:36px;background:var(--g);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;}
+    .nav-links{display:flex;gap:.3rem;align-items:center;}
+    .nav-links a{color:var(--txt);text-decoration:none;font-weight:500;padding:.37rem .72rem;border-radius:8px;transition:.18s;font-size:.87rem;}
+    .nav-links a:hover{color:var(--g);background:rgba(22,163,74,.08);}
+    .dd{position:relative;}
+    .dd-btn{color:var(--txt);font-weight:500;padding:.37rem .72rem;border-radius:8px;border:none;background:none;cursor:pointer;font-size:.87rem;display:flex;align-items:center;gap:.28rem;font-family:inherit;}
+    .dd-btn:hover{color:var(--g);background:rgba(22,163,74,.08);}
+    .dd-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;min-width:185px;box-shadow:0 8px 28px rgba(0,0,0,.12);border-radius:12px;z-index:1001;padding:.35rem 0;}
+    .dd:hover .dd-menu{display:block;animation:fd .18s ease;}
+    @keyframes fd{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+    .dd-menu a{display:block;padding:.56rem 1rem;font-size:.87rem;color:var(--txt);text-decoration:none;transition:.15s;}
+    .dd-menu a:hover{background:rgba(22,163,74,.08);color:var(--g);padding-left:1.25rem;}
+    .user-info{display:flex;align-items:center;gap:.65rem;margin-left:.9rem;padding-left:.9rem;border-left:1px solid var(--bdr);}
+    .user-info a{color:var(--g);text-decoration:none;font-weight:600;padding:.37rem .82rem;border-radius:8px;background:rgba(22,163,74,.1);transition:.15s;font-size:.87rem;}
+    .user-info a:hover{background:rgba(22,163,74,.2);}
+    .menu-btn{display:none;background:none;border:none;font-size:1.5rem;color:var(--gd);cursor:pointer;}
+
+    /* PAGE */
+    .page{max-width:1320px;margin:0 auto;padding:0 1.5rem 4rem;}
+
+    /* HERO */
+    .hero{text-align:center;padding:2.5rem 1rem 1.5rem;color:#fff;}
+    .hero h1{font-size:2rem;font-weight:800;letter-spacing:-.4px;}
+    .hero span{color:#86efac;}
+    .hero p{color:#bbf7d0;margin-top:.4rem;font-size:.93rem;}
+
+    /* SEARCH */
+    .search-card{background:rgba(255,255,255,.97);border-radius:var(--r);padding:1.6rem 2rem;box-shadow:var(--sh);margin-bottom:1.4rem;}
+    .search-card h2{font-size:.98rem;color:var(--gd);margin-bottom:1rem;display:flex;align-items:center;gap:.4rem;}
+    .search-row{display:flex;gap:.8rem;align-items:flex-end;}
+    label.lbl{font-size:.77rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:.32rem;}
+    .s-input{flex:1;padding:.82rem 1rem;border:2px solid var(--bdr);border-radius:10px;font-size:.96rem;font-family:inherit;transition:.18s;}
+    .s-input:focus{border-color:var(--g);outline:none;box-shadow:0 0 0 3px rgba(22,163,74,.11);}
+    .s-btn{padding:.82rem 1.8rem;background:var(--g);color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;transition:.18s;font-family:inherit;display:flex;align-items:center;gap:.45rem;white-space:nowrap;}
+    .s-btn:hover{background:var(--gd);transform:translateY(-1px);}
+    .hint{font-size:.77rem;color:var(--muted);margin-top:.65rem;}
+
+    /* DATE BADGE */
+    .date-bar{display:flex;align-items:center;gap:.6rem;margin-bottom:1.2rem;}
+    .date-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:20px;color:#fff;font-size:.82rem;font-weight:600;}
+
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.2rem;}
+    .stat{background:rgba(255,255,255,.94);border-radius:var(--r);padding:1rem 1.2rem;box-shadow:var(--sh);border-left:4px solid var(--g);}
+    .stat.a{border-color:var(--acc);}
+    .stat.b{border-color:var(--blue);}
+    .stat.p{border-color:#8b5cf6;}
+    .s-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);}
+    .s-val{font-size:1.5rem;font-weight:800;color:var(--gd);margin-top:.12rem;}
+    .s-sub{font-size:.72rem;color:var(--muted);}
+
+    /* TABS */
+    .tabs-card{background:rgba(255,255,255,.94);border-radius:var(--r);padding:1.1rem 1.4rem;box-shadow:var(--sh);margin-bottom:1.1rem;}
+    .tabs-title{font-size:.82rem;font-weight:700;color:var(--gd);margin-bottom:.65rem;}
+    .tabs{display:flex;gap:.45rem;flex-wrap:wrap;}
+    .tab{padding:.28rem .75rem;border-radius:20px;font-size:.79rem;font-weight:600;cursor:pointer;border:2px solid var(--bdr);background:#fff;color:var(--muted);transition:.14s;user-select:none;}
+    .tab:hover{border-color:var(--g);color:var(--g);}
+    .tab.on{background:var(--g);border-color:var(--g);color:#fff;}
+
+    /* TABLE */
+    .tbl-card{background:rgba(255,255,255,.97);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;}
+    .tbl-hd{display:flex;justify-content:space-between;align-items:center;padding:1.05rem 1.4rem;border-bottom:1px solid var(--bdr);flex-wrap:wrap;gap:.7rem;}
+    .tbl-hd-l h3{font-size:.93rem;font-weight:700;color:var(--gd);}
+    .tbl-hd-l p{font-size:.77rem;color:var(--muted);margin-top:.1rem;}
+    .live{display:inline-flex;align-items:center;gap:.28rem;padding:.22rem .65rem;border-radius:20px;font-size:.73rem;font-weight:700;background:var(--gl);color:var(--gd);}
+    .live::before{content:'';width:6px;height:6px;background:var(--g);border-radius:50%;animation:pulse 1.4s ease infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    .tbl-search{padding:.4rem .82rem;border:1.5px solid var(--bdr);border-radius:8px;font-size:.84rem;font-family:inherit;}
+    .tbl-search:focus{border-color:var(--g);outline:none;}
+
+    table{width:100%;border-collapse:collapse;}
+    thead{background:var(--gs);}
+    th{padding:.72rem 1rem;text-align:left;font-size:.73rem;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gl);white-space:nowrap;}
+    td{padding:.82rem 1rem;font-size:.86rem;border-bottom:1px solid #f3f4f6;vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:#f0fdf4;}
+    .c-name{font-weight:700;color:var(--gd);}
+    .v-tag{padding:.13rem .48rem;background:var(--gs);border-radius:6px;font-size:.75rem;color:var(--g);font-weight:600;}
+    .p-min{color:var(--red);font-weight:700;}
+    .p-max{color:var(--g);font-weight:700;}
+    .p-modal{background:#eff6ff;color:var(--blue);font-weight:800;padding:.2rem .5rem;border-radius:7px;font-size:.85rem;}
+    .mkt{display:flex;align-items:center;gap:.32rem;}
+    .mkt-dot{width:6px;height:6px;background:var(--g);border-radius:50%;flex-shrink:0;}
+    .dt{color:var(--muted);font-size:.79rem;}
+
+    .tbl-ft{display:flex;justify-content:space-between;align-items:center;padding:.82rem 1.4rem;border-top:1px solid var(--bdr);flex-wrap:wrap;gap:.4rem;}
+    .tbl-ft span{font-size:.77rem;color:var(--muted);}
+    .src{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .62rem;border-radius:20px;font-size:.73rem;color:var(--muted);background:#f9fafb;border:1px solid var(--bdr);}
+
+    /* EMPTY */
+    .empty{text-align:center;padding:4rem 2rem;background:rgba(255,255,255,.95);border-radius:var(--r);box-shadow:var(--sh);}
+    .empty .ico{font-size:3.5rem;margin-bottom:1rem;opacity:.55;}
+    .empty h3{font-size:1.05rem;color:var(--txt);margin-bottom:.35rem;}
+    .empty p{font-size:.87rem;color:var(--muted);}
+    .chips{display:flex;gap:.45rem;flex-wrap:wrap;justify-content:center;margin-top:.9rem;}
+    .chip{padding:.28rem .82rem;background:rgba(22,163,74,.08);border:1.5px solid rgba(22,163,74,.2);border-radius:20px;font-size:.79rem;font-weight:600;color:var(--gd);cursor:pointer;transition:.14s;}
+    .chip:hover{background:rgba(22,163,74,.16);}
+
+    @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:640px){
+      .search-row{flex-direction:column;}
+      .s-btn{justify-content:center;}
+      .stats{grid-template-columns:1fr 1fr;}
+      table{display:block;overflow-x:auto;}
+      .nav{padding:.8rem 1rem;}
+      .menu-btn{display:block;}
+      .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;flex-direction:column;padding:1rem;box-shadow:0 8px 20px rgba(0,0,0,.1);}
+      .nav-links.open{display:flex;}
+      .user-info{border-left:none;border-top:1px solid var(--bdr);padding:1rem 0 0;margin:0;width:100%;}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <a href="/" class="logo"><div class="logo-icon">🌱</div>AgriFarm</a>
+    <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+    <div class="nav-links" id="navLinks">
+      <a href="{{ url_for('home') }}">🏠 Home</a>
+      <div class="dd">
+        <button class="dd-btn">Farm Tools <i class="fas fa-chevron-down"></i></button>
+        <div class="dd-menu">
+          <a href="{{ url_for('crop_recommendation') }}">🌾 Crop Recommendation</a>
+          <a href="{{ url_for('fertilizer_recommendation') }}">🧪 Fertilizer Guide</a>
+          <a href="{{ url_for('disease_page') }}">🦠 Disease Detection</a>
+          <a href="{{ url_for('weather') }}">☁️ Weather</a>
+          <a href="{{ url_for('chatbot_page') }}">🤖 AgriBot</a>
         </div>
-      </nav>
-    </header>
-
-    <main>
-      <div class="search-container">
-        <form
-          class="search-form"
-          method="POST"
-          action="{{ url_for('crop_prices_view') }}"
-        >
-          <input
-            type="text"
-            name="district"
-            placeholder="Enter district name"
-            class="search-input"
-          />
-          <button type="submit" class="search-button">Search</button>
-        </form>
       </div>
-
-      <div class="price-cards">
-        {% for record in data.records %}
-        <div class="crop-card">
-          <div class="crop-header">
-            <h2 class="crop-title">{{ record.commodity }}</h2>
-          </div>
-          <div class="price-grid">
-            <div class="price-item">
-              <div class="price-label">State</div>
-              <div class="price-value">{{ record.state }}</div>
-            </div>
-            <div class="price-item">
-              <div class="price-label">District</div>
-              <div class="price-value">{{ record.district }}</div>
-            </div>
-            <div class="price-item">
-              <div class="price-label">Market</div>
-              <div class="price-value">{{ record.market }}</div>
-            </div>
-            <div class="price-item">
-              <div class="price-label">Variety</div>
-              <div class="price-value">{{ record.variety }}</div>
-            </div>
-            <div class="price-item">
-              <div class="price-label">Min Price</div>
-              <div class="price-value">₹{{ record.min_price }}</div>
-            </div>
-            <div class="price-item">
-              <div class="price-label">Max Price</div>
-              <div class="price-value">₹{{ record.max_price }}</div>
-            </div>
-            <div class="price-item">
-              <div class="price-label">Modal Price</div>
-              <div class="price-value">₹{{ record.modal_price }}</div>
-            </div>
-          </div>
+      <div class="dd">
+        <button class="dd-btn">Marketplace <i class="fas fa-chevron-down"></i></button>
+        <div class="dd-menu">
+          <a href="{{ url_for('crop_prices_view') }}">📈 Crop Prices</a>
+          <a href="{{ url_for('marketplace_view') }}">🛒 Buy &amp; Sell</a>
+          <a href="{{ url_for('view_orders') }}">📦 My Orders</a>
         </div>
+      </div>
+      {% if session.get('role') == 'admin' %}<a href="{{ url_for('admin_orders') }}">⚙️ Admin</a>{% endif %}
+      <a href="{{ url_for('feedback') }}">Feedback</a>
+      <div class="user-info">
+        {% if session.get('username') %}
+        <span style="font-size:.87rem;font-weight:500;color:#374151;">👋 {{ session['username'] }}</span>
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>📊 Live <span>Mandi</span> Crop Prices</h1>
+    <p>Daily variety-wise commodity prices from Maharashtra mandis · Source: <strong>data.gov.in</strong></p>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-card">
+    <h2><i class="fas fa-search" style="color:var(--g)"></i>&nbsp; Search by District</h2>
+    <form method="POST" action="{{ url_for('crop_prices_view') }}" id="searchForm">
+      <div class="search-row">
+        <div style="flex:1">
+          <label class="lbl" for="districtInput">District Name (Maharashtra)</label>
+          <input type="text" id="districtInput" name="district" class="s-input"
+                 placeholder="e.g. Pune, Nashik, Nagpur, Aurangabad…"
+                 value="{{ district or '' }}" required autocomplete="off" />
+        </div>
+        <button type="submit" class="s-btn"><i class="fas fa-search"></i> Get Prices</button>
+      </div>
+    </form>
+    <p class="hint">
+      <i class="fas fa-calendar-day"></i> Showing prices for today: <strong>{{ today }}</strong> &nbsp;|&nbsp;
+      <i class="fas fa-map-marker-alt"></i> State fixed to Maharashtra &nbsp;|&nbsp;
+      Limit: 100 records
+    </p>
+  </div>
+
+  <!-- RESULTS -->
+  {% if data and data.get('records') and data['records']|length > 0 %}
+
+    {% set records = data['records'] %}
+    {% set total = data.get('total', records|length)|int %}
+    {% set commodities = records | map(attribute='Commodity') | list | unique | list | sort %}
+    {% set markets = records | map(attribute='Market') | list | unique | list %}
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat">
+        <div class="s-lbl"><i class="fas fa-table"></i> Showing</div>
+        <div class="s-val">{{ records|length }}</div>
+        <div class="s-sub">out of {{ '{:,}'.format(total) }} total</div>
+      </div>
+      <div class="stat a">
+        <div class="s-lbl"><i class="fas fa-leaf"></i> Commodities</div>
+        <div class="s-val">{{ commodities|length }}</div>
+        <div class="s-sub">different commodities</div>
+      </div>
+      <div class="stat b">
+        <div class="s-lbl"><i class="fas fa-store"></i> Markets</div>
+        <div class="s-val">{{ markets|length }}</div>
+        <div class="s-sub">unique mandis</div>
+      </div>
+      <div class="stat p">
+        <div class="s-lbl"><i class="fas fa-map-marker-alt"></i> District</div>
+        <div class="s-val" style="font-size:1rem;padding-top:.15rem;">{{ records[0]['District'] }}</div>
+        <div class="s-sub">{{ records[0]['State'] }}</div>
+      </div>
+    </div>
+
+    <!-- COMMODITY TABS -->
+    {% if commodities|length > 1 %}
+    <div class="tabs-card">
+      <div class="tabs-title"><i class="fas fa-tags" style="color:var(--g)"></i> Filter by Commodity</div>
+      <div class="tabs">
+        <div class="tab on" onclick="filterTab(this,'ALL')">🌾 All ({{ records|length }})</div>
+        {% for c in commodities %}
+        <div class="tab" onclick="filterTab(this,'{{ c }}')">{{ c }}</div>
         {% endfor %}
       </div>
-    </main>
+    </div>
+    {% endif %}
 
-    <script>
-      // Mobile menu toggle
-      const menuToggle = document.querySelector('.menu-toggle');
-      const navLinks = document.querySelector('.nav-links');
+    <!-- TABLE -->
+    <div class="tbl-card">
+      <div class="tbl-hd">
+        <div class="tbl-hd-l">
+          <h3><i class="fas fa-table"></i> Price Records — {{ district }}</h3>
+          <p id="countLbl">Showing <span id="shownN">{{ records|length }}</span> records for {{ today }}</p>
+        </div>
+        <div style="display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;">
+          <span class="live">LIVE DATA</span>
+          <input class="tbl-search" id="tblQ" type="text" placeholder="🔍 Search…" oninput="searchTbl()">
+        </div>
+      </div>
 
-      menuToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-      });
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Commodity</th>
+              <th>Variety</th>
+              <th>Grade</th>
+              <th>Market</th>
+              <th>Date</th>
+              <th>Min ₹</th>
+              <th>Max ₹</th>
+              <th>Modal ₹</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody">
+            {% for r in records %}
+            <tr data-c="{{ r['Commodity'] }}">
+              <td style="color:var(--muted);font-size:.77rem;">{{ loop.index }}</td>
+              <td><span class="c-name">{{ r['Commodity'] }}</span></td>
+              <td><span class="v-tag">{{ r.get('Variety','—') }}</span></td>
+              <td style="color:var(--muted);font-size:.79rem;">{{ r.get('Grade','') }}</td>
+              <td><div class="mkt"><span class="mkt-dot"></span>{{ r['Market'] }}</div></td>
+              <td class="dt">{{ r.get('Arrival_Date','') }}</td>
+              <td class="p-min">{{ r['Min_Price'] }}</td>
+              <td class="p-max">{{ r['Max_Price'] }}</td>
+              <td><span class="p-modal">{{ r['Modal_Price'] }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-      // Mobile dropdown functionality
-      const dropdowns = document.querySelectorAll('.dropdown');
-      
-      dropdowns.forEach(dropdown => {
-        const dropdownBtn = dropdown.querySelector('.dropdown-btn');
-        
-        dropdownBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          
-          // Close other dropdowns in mobile
-          if (window.innerWidth <= 992) {
-            dropdowns.forEach(otherDropdown => {
-              if (otherDropdown !== dropdown) {
-                otherDropdown.classList.remove('active');
-              }
-            });
-            
-            // Toggle current dropdown
-            dropdown.classList.toggle('active');
-          }
-        });
-      });
+      <div class="tbl-ft">
+        <span>All prices in <strong>₹ per quintal</strong></span>
+        <span class="src"><i class="fas fa-database"></i> data.gov.in · Ministry of Agriculture &amp; Farmers Welfare</span>
+      </div>
+    </div>
 
-      // Close mobile menu when clicking outside
-      document.addEventListener('click', function(e) {
-        if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
-          navLinks.classList.remove('active');
-          
-          // Close all dropdowns
-          dropdowns.forEach(dropdown => {
-            dropdown.classList.remove('active');
-          });
-        }
-      });
+  {% elif data and data.get('error') %}
+    <div class="empty">
+      <div class="ico">⚠️</div>
+      <h3>API Error</h3>
+      <p>{{ data['error'] }}</p>
+    </div>
 
-      // Handle window resize
-      window.addEventListener('resize', function() {
-        if (window.innerWidth > 992) {
-          navLinks.classList.remove('active');
-          dropdowns.forEach(dropdown => {
-            dropdown.classList.remove('active');
-          });
-        }
-      });
-    </script>
-  </body>
+  {% elif data %}
+    <!-- Data returned but 0 records -->
+    <div class="empty">
+      <div class="ico">🔍</div>
+      <h3>No prices found for "{{ district }}" on {{ today }}</h3>
+      <p>The mandi might not have reported prices today, or the district name may be different.</p>
+      <div class="chips">
+        {% for d in ['Pune','Nashik','Nagpur','Aurangabad','Nanded','Latur','Kolhapur','Solapur'] %}
+        <div class="chip" onclick="qs('{{ d }}')">📍 {{ d }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  {% else %}
+    <!-- Initial state — nothing searched yet -->
+    <div class="empty">
+      <div class="ico">🌾</div>
+      <h3>Enter a district to see today's crop prices</h3>
+      <p>Live variety-wise mandi prices for Maharashtra — updated daily.</p>
+      <div class="chips">
+        {% for d in ['Pune','Nashik','Nagpur','Aurangabad','Nanded','Latur','Kolhapur','Solapur'] %}
+        <div class="chip" onclick="qs('{{ d }}')">📍 {{ d }}</div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+
+<script>
+  // Mobile nav
+  document.getElementById('menuBtn').addEventListener('click', () =>
+    document.getElementById('navLinks').classList.toggle('open'));
+
+  // Quick search from chips
+  function qs(dist) {
+    document.getElementById('districtInput').value = dist;
+    document.getElementById('searchForm').submit();
+  }
+
+  // Commodity tab filter
+  function filterTab(el, commodity) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    var rows = document.querySelectorAll('#tblBody tr');
+    var shown = 0;
+    rows.forEach(row => {
+      var match = commodity === 'ALL' || row.dataset.c === commodity;
+      row.style.display = match ? '' : 'none';
+      if (match) shown++;
+    });
+    document.getElementById('shownN').textContent = shown;
+  }
+
+  // Text search
+  function searchTbl() {
+    var q = document.getElementById('tblQ').value.toLowerCase();
+    var shown = 0;
+    document.querySelectorAll('#tblBody tr').forEach(row => {
+      var m = row.textContent.toLowerCase().includes(q);
+      row.style.display = m ? '' : 'none';
+      if (m) shown++;
+    });
+    document.getElementById('shownN').textContent = shown;
+  }
+</script>
+
+</body>
 </html>

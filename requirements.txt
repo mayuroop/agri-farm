@@ -1,3 +1,0 @@
-Flask
-requests
-pymongo==4.3.3

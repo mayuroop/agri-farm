@@ -902,6 +902,87 @@
         }
 
       }
+
+      /* ── Crop Advisory Panel ─────────────────────────────── */
+      .advisory-panel {
+        margin-top: 2.5rem;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 6px 32px rgba(0,0,0,.1);
+        border: 1px solid #e8f5e9;
+        animation: fadeSlideUp .5s ease;
+      }
+      @keyframes fadeSlideUp {
+        from { opacity:0; transform:translateY(20px); }
+        to   { opacity:1; transform:translateY(0); }
+      }
+      .advisory-header {
+        background: linear-gradient(135deg, #e65100, #f57c00);
+        padding: 18px 26px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .advisory-header-icon {
+        width: 46px; height: 46px;
+        background: rgba(255,255,255,.18);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 22px;
+      }
+      .advisory-header-text h3 { color:#fff; font-size:17px; font-weight:700; margin:0 0 3px; }
+      .advisory-header-text p  { color:rgba(255,255,255,.78); font-size:13px; margin:0; }
+      .advisory-body { background:#fff; padding:26px; }
+      .advisory-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 16px;
+        margin-bottom: 22px;
+      }
+      .advisory-card {
+        border-radius: 14px;
+        padding: 18px;
+        position: relative;
+        overflow: hidden;
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .advisory-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+      .advisory-card-icon { font-size: 26px; margin-bottom: 8px; }
+      .advisory-card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; opacity: .7; }
+      .advisory-card-value { font-size: 15px; font-weight: 600; line-height: 1.5; }
+      .advisory-card.season   { background: #fff8e1; color: #6d4c00; }
+      .advisory-card.msp      { background: #e8f5e9; color: #1b5e20; }
+      .advisory-card.water    { background: #e3f2fd; color: #0d47a1; }
+      .advisory-card.threat   { background: #fce4ec; color: #880e4f; }
+      .advisory-card.scheme   { background: #f3e5f5; color: #4a148c; }
+      .advisory-card.tips     { background: #e0f2f1; color: #004d40; }
+      .advisory-tips-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 4px;
+      }
+      .advisory-tips-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 14px;
+        color: #444;
+        background: #f9fafb;
+        border-radius: 10px;
+        padding: 10px 14px;
+        border-left: 4px solid #f57c00;
+      }
+      .advisory-tips-list li span.tip-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+      .advisory-disclaimer {
+        font-size: 12px;
+        color: #aaa;
+        text-align: center;
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid #f0f0f0;
+      }
     </style>
   </head>
   <body>
@@ -923,6 +1004,8 @@
             </button>
             <div class="dropdown-content">
               <a href="#crop-recommendation">Crop Recommendation</a>
+              <a href="{{ url_for('yield_prediction') }}">🌾 Yield Prediction</a>
+              <a href="{{ url_for('disease_page') }}">🌿 Disease Detection</a>
               <a href="{{ url_for('fertilizer_recommendation') }}">Fertilizer Guide</a>
               <a href="{{ url_for('weather') }}">Weather Forecast</a>
               <a href="{{ url_for('chatbot_page') }}">AgriBot Assistant</a>
@@ -986,6 +1069,23 @@
           <i class="fas fa-shopping-cart feature-icon"></i>
           <h3>Digital Marketplace</h3>
           <p>Direct connect with buyers and suppliers nationwide</p>
+        </div>
+        <div class="feature-card" style="cursor:pointer;" data-href="{{ url_for('disease_page') }}" onclick="location.href=this.dataset.href">
+          <i class="fas fa-microscope feature-icon" style="color:#16a34a;"></i>
+          <h3>Disease Detection</h3>
+          <p>Upload a leaf photo — AI diagnoses plant diseases instantly with treatment steps</p>
+          <span style="display:inline-block;margin-top:8px;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">38 Disease Classes · CNN AI</span>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-brain feature-icon" style="color:#7c3aed;"></i>
+          <h3>Explainable AI</h3>
+          <p>SHAP-powered explanations show exactly why each crop is recommended for your soil</p>
+          <span style="display:inline-block;margin-top:8px;background:#ede9fe;color:#6d28d9;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">SHAP · Feature Importance</span>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-robot feature-icon" style="color:#0369a1;"></i>
+          <h3>AgriBot AI Chat</h3>
+          <p>Ask any farming question — powered by Gemini AI with expert agricultural knowledge</p>
         </div>
       </div>
     </section>
@@ -1075,6 +1175,48 @@
               <!-- Results will be populated here -->
             </div>
           </div>
+        </div>
+
+        <!-- SHAP Explainability Panel -->
+        <div id="shapPanel" style="display:none;margin-top:2.5rem;">
+          <div style="background:white;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);border:1px solid #f0f0f0;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,#1b5e20,#2e7d32);padding:18px 24px;display:flex;align-items:center;gap:12px;">
+              <div style="width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">🧠</div>
+              <div>
+                <div style="font-size:17px;font-weight:700;color:white;">Why this crop was recommended</div>
+                <div style="font-size:13px;color:rgba(255,255,255,.75);">Powered by SHAP Explainable AI</div>
+              </div>
+            </div>
+            <div id="shapLoading" style="text-align:center;padding:32px;display:none;">
+              <div style="width:36px;height:36px;border:3px solid #e0e0e0;border-top-color:#2e7d32;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;"></div>
+              <p style="color:#555;font-size:14px;">Generating SHAP explanation...</p>
+            </div>
+            <div id="shapError" style="display:none;padding:20px;background:#fff5f5;border-top:1px solid #fce4e4;">
+              <p style="color:#b91c1c;font-size:14px;"><i class="fas fa-info-circle"></i> <span id="shapErrorMsg"></span></p>
+            </div>
+            <div id="shapContent" style="display:none;padding:24px;">
+              <!-- Feature contributions table -->
+              <div style="margin-bottom:20px;">
+                <div style="font-size:14px;font-weight:700;color:#333;margin-bottom:12px;border-bottom:2px solid #f0f0f0;padding-bottom:8px;">📊 Feature Contributions</div>
+                <div id="shapContributions" style="display:flex;flex-direction:column;gap:8px;"></div>
+              </div>
+              <!-- Charts side by side -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">🌊 Waterfall Plot</div>
+                  <img id="shapWaterfall" src="" alt="SHAP Waterfall" style="width:100%;border-radius:10px;border:1px solid #e0e0e0;">
+                </div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">📊 Feature Importance</div>
+                  <img id="shapImportance" src="" alt="Feature Importance" style="width:100%;border-radius:10px;border:1px solid #e0e0e0;">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- ── Crop Advisory Panel ── -->
+        <div id="advisoryPanel" style="display:none;"></div>
+
         </div>
       </div>
     </section>
@@ -1221,10 +1363,16 @@
           if (data.success) {
             // Display results
             displayResults(data.recommendations, data.input_data, data.model_status);
+            renderAdvisory(data.recommendations[0].crop, data.input_data);
             resultsContainer.style.display = 'block';
             
             // Scroll to results
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
+
+            // Fetch SHAP explanation for top recommendation
+            if (data.recommendations && data.recommendations.length > 0) {
+              fetchSHAP(data.input_data, data.recommendations[0].crop);
+            }
           } else {
             throw new Error(data.error || 'Failed to get recommendations');
           }
@@ -1295,6 +1443,162 @@
         resultsGrid.innerHTML = `<div class="error">${message}</div>`;
         resultsContainer.style.display = 'block';
         resultsContainer.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      async function fetchSHAP(inputData, cropName) {
+        const panel = document.getElementById('shapPanel');
+        const loading = document.getElementById('shapLoading');
+        const content = document.getElementById('shapContent');
+        const errBox = document.getElementById('shapError');
+        const errMsg = document.getElementById('shapErrorMsg');
+
+        panel.style.display = 'block';
+        loading.style.display = 'block';
+        content.style.display = 'none';
+        errBox.style.display = 'none';
+
+        try {
+          // Fix: wrap keys under 'features' with uppercase names expected by backend
+          const features = {
+            N: inputData.n, P: inputData.p, K: inputData.k,
+            temperature: inputData.temperature, humidity: inputData.humidity,
+            ph: inputData.ph, rainfall: inputData.rainfall
+          };
+          const resp = await fetch('/api/explain-crop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ features, prediction: cropName })
+          });
+          const data = await resp.json();
+          loading.style.display = 'none';
+
+          if (!data.success) {
+            errBox.style.display = 'block';
+            errMsg.textContent = data.error || 'SHAP explanation unavailable';
+            return;
+          }
+
+          // Feature contributions
+          const contribDiv = document.getElementById('shapContributions');
+          contribDiv.innerHTML = data.feature_contributions.map(fc => {
+            const pct = Math.abs(fc.pct);
+            const color = fc.influence === 'Positive' ? '#15803d' : '#b91c1c';
+            const bg   = fc.influence === 'Positive' ? '#dcfce7' : '#fee2e2';
+            const arrow= fc.influence === 'Positive' ? '▲' : '▼';
+            return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f9f9f9;border-radius:10px;border:1px solid #eee;">
+              <div style="flex:1;font-size:13px;color:#333;font-weight:500;">${fc.name}</div>
+              <div style="font-size:12px;color:#888;">${fc.raw_value} ${fc.unit}</div>
+              <div style="width:100px;background:#e5e7eb;border-radius:50px;height:6px;overflow:hidden;">
+                <div style="width:${Math.min(pct*2,100)}%;height:6px;background:${color};border-radius:50px;"></div>
+              </div>
+              <div style="font-size:12px;font-weight:700;color:${color};background:${bg};padding:2px 8px;border-radius:50px;min-width:52px;text-align:center;">${arrow} ${pct}%</div>
+            </div>`;
+          }).join('');
+
+          document.getElementById('shapWaterfall').src  = data.waterfall_plot;
+          document.getElementById('shapImportance').src = data.importance_chart;
+          content.style.display = 'block';
+          panel.scrollIntoView({ behavior: 'smooth' });
+
+        } catch(err) {
+          loading.style.display = 'none';
+          errBox.style.display = 'block';
+          errMsg.textContent = 'Network error fetching SHAP explanation: ' + err.message;
+        }
+      }
+
+      // ── Indian Farmer Crop Advisory ───────────────────────────────
+      const CROP_ADVISORY = {
+        'Rice':        { season:'Kharif (Jun–Nov)', msp:'₹2,183/quintal (2023-24)', water:'High – 1200–2000 mm/season; flood or SRI irrigation', threat:'Brown planthopper, Blast disease, Sheath blight', scheme:'PM-KISAN, PMFBY, National Food Security Mission (NFSM-Rice)', tips:['Puddling the soil before transplanting retains moisture.','Use certified seeds like Pusa 1121 or MTU 7029.','Apply urea in split doses — basal + top-dressing at tillering.','Drain the field midseason to reduce methane and increase yield.'] },
+        'Wheat':       { season:'Rabi (Nov–Mar)', msp:'₹2,275/quintal (2023-24)', water:'Moderate – 4–5 irrigations; critical at CRI, tillering & grain-fill', threat:'Yellow rust, Aphids, Loose smut, Karnal bunt', scheme:'PM-KISAN, PMFBY, NFSM-Wheat, Paramparagat Krishi Vikas', tips:['Sow before 25 November for optimum yield in North India.','Use GW 496 or HD 2967 varieties for higher MSP eligibility.','Seed treatment with Vitavax before sowing reduces smut.','Maintain 20-22 cm row spacing for better tillering.'] },
+        'Maize':       { season:'Kharif (Jun–Sep) / Rabi (Nov–Feb)', msp:'₹2,090/quintal (2023-24)', water:'Moderate – 500–700 mm; critical at silking & grain fill', threat:'Fall Armyworm (FAW), Stem borer, Turcicum leaf blight', scheme:'NFSM-Maize, PM Fasal Bima Yojana, eNAM', tips:['Apply Coragen 18.5 SC for Fall Armyworm control.','Ridge-and-furrow sowing improves drainage in heavy soils.','Use hybrid seeds (NKSH 6240, Dekalb 9144) for higher yield.','Top-dress with nitrogen fertiliser at the knee-height stage.'] },
+        'Cotton':      { season:'Kharif (Apr–Oct)', msp:'₹6,620/quintal medium-staple (2023-24)', water:'Moderate – 700–1200 mm; drip irrigation preferred', threat:'Pink bollworm, Whitefly (spreading CLCuV), Fusarium wilt', scheme:'TCSPD, PM Mitra, PMFBY, Technology Mission on Cotton', tips:['Plant Bt cotton varieties approved by GEAC for bollworm resistance.','Maintain 90×45 cm spacing for rainfed; 60×30 cm for irrigated.','Avoid excessive nitrogen — promotes boll rot and pest outbreaks.','Harvest in dry weather; ginning within 48 hrs preserves fibre quality.'] },
+        'Sugarcane':   { season:'Year-round (plant: Feb–Mar or Oct–Nov)', msp:'FRP ₹340/quintal for 10.25% recovery', water:'High – 1500–2500 mm; drip irrigation saves 30–40%', threat:'Top shoot borer, Red rot, Wilt disease, Woolly aphid', scheme:'CANE (Sugarcane) subsidy, PM-KISAN, SDF loans via NABARD', tips:['Use sett treatment with Carbendazim + Chlorpyriphos before planting.','Trash mulching between rows conserves moisture and suppresses weeds.','Ratoon crop saves 30% input cost — irrigate immediately after harvest.','Link with nearest sugar mill for timely harvest scheduling (SAP).'] },
+        'Banana':      { season:'Year-round; best planting Mar–Jun, Oct–Dec', msp:'No MSP – market price ₹15–35/kg', water:'Very High – 900–1200 L/plant/yr; drip recommended', threat:'Panama wilt (Fusarium oxysporum), Sigatoka, Banana weevil', scheme:'MIDH (Horticulture Mission), PM-KISAN, NABARD term loans', tips:['Use tissue culture plants for disease-free establishment.','Apply 200 g Urea + 250 g MOP per plant in 4 splits.','Prop plants against wind to prevent pseudo-stem toppling.','Harvest at 75% maturity for distant markets; 85% for local.'] },
+        'Mango':       { season:'Planting Jun–Aug; harvest Apr–Jun', msp:'No MSP – export-grade ₹40–120/kg', water:'Low-Moderate – drought-tolerant once established', threat:'Mango hopper, Powder mildew, Anthracnose, Mealybug', scheme:'MIDH, GI tag marketing support, APEDA export subsidy', tips:['Apply 0.2% Mancozeb spray at panicle emergence for mildew.','Smudging (smoke) induces flowering in tropical lowlands.','Thin fruit clusters to 1-2 per panicle for premium grade output.','Apply 2% KNO3 spray in Nov to synchronise off-season flowering.'] },
+        'Coffee':      { season:'Planting Jun–Aug; harvest Nov–Feb', msp:'No MSP – arabica premium ₹8,000–18,000/bag', water:'Moderate – 1500–3000 mm; shade grown preferred', threat:'White stem borer, Coffee leaf rust, Berry borer', scheme:'Coffee Board of India subsidies, NHM, NABARD composite loans', tips:['Maintain shade trees (Grevillea, Silver oak) at 65% canopy cover.','Strip harvesting ensures uniform ripeness for specialty markets.','Compost pulped husk into vermicompost — reduces input cost by 20%.','Register with Coffee Board for quality premium and export support.'] },
+        'Coconut':     { season:'Planting Jun–Aug; fruiting year-round from yr 5', msp:'Copra MSP ₹10,860/quintal (2023-24)', water:'Moderate-High – 150 cm/yr; drip at basin saves 40%', threat:'Rhinoceros beetle, Red palm weevil, Bud rot, Copra beetle', scheme:'National Coconut Development Board subsidies, PMKSY drip support', tips:['Release Trichoderma + Beauveria granules in crown for weevil control.','Apply 50 kg organic manure per palm per year at monsoon onset.','Intercrop with banana/ginger in early years (1–4 yrs) for income.','Verify grade: West coast tall palms qualify for Agmark premium.'] },
+        'Papaya':      { season:'Planted Jun–Aug or Feb; fruiting in 10–12 months', msp:'No MSP – local market ₹12–25/kg', water:'Moderate – drip preferred; waterlogged soils kill roots', threat:'Papaya ring spot virus (PRSV), Powdery mildew, Fruit fly', scheme:'MIDH subsidy, PM-KISAN, NABARD soft loans', tips:['Use PRSV-tolerant hybrids: Pusa Delicious, Red Lady 786.','Maintain only ONE trunk — remove lateral shoots early.','Apply reflective mulch to deter aphid vectors of PRSV.','Harvest at 10–25% colour break for export; 50% for local markets.'] },
+        'Orange':      { season:'Mandarin: Sep–Feb; Nagpur mandarin harvest Nov–Jan', msp:'No MSP – wholesale ₹25–60/kg', water:'Moderate – deficit irrigation at flowering stage increases fruit set', threat:'Citrus greening (HLB), Tristeza virus, Mealybug, Leafminer', scheme:'MIDH (Citrus rejuvenation), GI Nagpur Mandarin, APEDA export', tips:['Spray 0.3% Zinc sulphate + 0.2% Borax pre-blossom for fruit set.','Use certified budded plants from state nurseries — avoid diseased planting material.','Apply soil drench with Imidacloprid against psyllid (HLB vector).','Weed free basin of 1 m radius around trunk improves nutrient uptake.'] },
+        'Grapes':      { season:'Pruning Oct–Nov (Maharastra); harvest Feb–Apr', msp:'No MSP – export quality ₹60–120/kg', water:'Drip irrigation essential – 4,000–6,000 L/vine/yr', threat:'Downy mildew, Anthracnose, Thrips, Mealybug', scheme:'MIDH, APEDA NHB export subsidy, Maharashtra State Horticulture Mission', tips:['Follow UPL Bordeaux mixture schedule for downy mildew control.','Maintain spur pruning discipline to balance vegetative-reproductive growth.','Apply Ethephon (200 ppm) for uniform berry colouration before harvest.','Adopt canopy management (VSP/Y-trellis) for pesticide coverage.'] },
+        'Watermelon':  { season:'Summer (Feb–Apr); Kharif (Jun–Jul)', msp:'No MSP – wholesale ₹8–18/kg', water:'Moderate – drip with fertigation; 500–700 mm total', threat:'Cucumber mosaic virus, Aphids, Fusarium crown rot, Red pumpkin beetle', scheme:'PMFBY, MIDH protected cultivation subsidy', tips:['Male flowers open first — ensure bee pollinators or hand-pollinate.','Do not allow fruit to touch soil — use dry straw mulch as buffer.','Apply calcium nitrate at fruit development to prevent blossom-end rot.','Night harvesting in summer preserves TSS (sweetness) intact.'] },
+        'Muskmelon':   { season:'Summer (Feb–Apr); Zaid season', msp:'No MSP – wholesale ₹10–25/kg', water:'Moderate – tendrils indicate water stress in time', threat:'Powdery mildew, Whitefly, Root-knot nematode', scheme:'MIDH, NABARD storage subsidy', tips:['Net melon varieties command premium in organised retail supply chain.','Reduce irrigation 1 week before harvest for concentrated sweetness.','Use row covers for 3 weeks post-transplanting to exclude whitefly.','Drench soil with Carbosulfan before planting to control nematodes.'] },
+        'Chickpea':    { season:'Rabi (Oct–Feb)', msp:'₹5,440/quintal (2023-24)', water:'Low – 2–3 irrigations only; excess water promotes wilt', threat:'Pod borer (Helicoverpa), Ascochyta blight, Striga (dryland)', scheme:'NFSM-Pulses, PMFBY, e-NAM price linkage, Daal Subsidy Scheme', tips:['Treat seed with Rhizobium + PSB biofertilisers for free nitrogen.','Spray 0.1% NPV (Nuclear Polyhedrosis Virus) against pod borer.','Avoid late sowing after Oct 25 — flowering gets hit by terminal heat.','Harvest at 80% pod maturity; delay causes shattering losses.'] },
+        'Lentil':      { season:'Rabi (Oct–Feb)', msp:'₹6,000/quintal (2023-24)', water:'Low – 1–2 irrigations at flowering; rain-fed possible', threat:'Fusarium wilt, Stem anthracnose, Aphid', scheme:'NFSM-Pulses, Pradhan Mantri Annadata Aay SanraksHan Abhiyan (PM-AASHA)', tips:['Seed inoculation with Rhizobium leguminosarum increases yield 15–20%.','Shallow sowing (3–4 cm) ensures better germination in fine soils.','Cut crop when 70% pods turn yellow to minimise shattering.','Store with neem leaves to prevent pulse beetle (Callosobruchus).'] },
+        'Blackgram':   { season:'Kharif (Jun–Sep); Zaid (Feb–Apr)', msp:'₹7,400/quintal (2023-24)', water:'Low-Moderate – avoid waterlogging; 400–600 mm adequate', threat:'Yellow mosaic virus (YMV), Leaf crinkle, Whitefly, Pod borer', scheme:'NFSM-Pulses, PMFBY, Tribal sub-plan pulse development', tips:['Use PU-31, LBG-648 (YMV-resistant) varieties to reduce virus losses.','Spray Imidacloprid 0.3 ml/L at 15 & 25 DAS to control whitefly vectors.','Inter-cropping with sorghum or maize reduces YMV incidence.','Export demand for urad — register with APEDA for premium pricing.'] },
+        'Mungbean':    { season:'Kharif (Jun–Sep); Zaid (Feb–Apr)', msp:'₹8,558/quintal (2023-24)', water:'Low – 350–500 mm; 2–3 irrigations if dry', threat:'Yellow mosaic virus, Powdery mildew, Thrips', scheme:'NFSM-Pulses, PMFBY, Pradhan Mantri Kisan Samman Nidhi', tips:['Short-duration varieties (moong IPM 02-3, SML 668) fit in rice-wheat system.','Spray 2% DAP as foliar at pod initiation for higher seed weight.','Harvest in 3 pickings to optimise green pod yield for vegetable market.','Seed rate 20–25 kg/ha; higher density reduces YMV spread.'] },
+        'Mothbeans':   { season:'Kharif (Jul–Sep); arid/semi-arid zones only', msp:'₹5,550/quintal (2023-24)', water:'Very Low – 200–350 mm; drought-tolerant — ideal for Rajasthan/Gujarat', threat:'Aphid, Rootknot nematode, Alternaria leaf spot', scheme:'NFSM-Pulses; Rajasthan state dryland farming support', tips:['No irrigation needed after establishment — optimum for desert soils.','Mix with bajra (pearl millet) as intercrop for resilience in drought.','Harvest pods in early morning to prevent shattering due to heat.','Traditional rainfed crop — PM-AASHA MSP procurement can be leveraged.'] },
+        'Pigeonpeas':  { season:'Kharif (Jun–Sep)', msp:'₹7,000/quintal (2023-24)', water:'Low-Moderate – 600–1000 mm; tolerates short dry spells', threat:'Pod fly, Maruca pod borer, Fusarium wilt, Sterility mosaic', scheme:'NFSM-Pulses, PM-AASHA, PMFBY, Rashtriya Krishi Vikas Yojana', tips:['Use wilt-resistant hybrids: ICPH-2671, LRG-41.','Spray Indoxacarb 0.5 ml/L at early pod stage against Maruca borer.','Intercrop with sorghum (1:1) — reduces sterility mosaic by vector break.','Ratoon crop possible in South India for second yield with 40% less input.'] },
+        'Kidneybeans': { season:'Kharif (Jun–Aug); Spring in hills (Mar–May)', msp:'No central MSP – state-level support varies', water:'Moderate – 300–500 mm; avoid standing water', threat:'Bean common mosaic virus, Rust, Stem rot, Aphid', scheme:'MIDH-vegetable cluster scheme; J&K, HP state horticulture missions', tips:['Common bean thrives in Himachal, J&K — link with export chain for Rajmah.','Avoid nitrogen overdose — legume fixes own N if Rhizobium-inoculated.','Stake climbing varieties at 3-leaf stage for better light interception.','Cold storage at 4–8°C extends shelf life of fresh beans by 2–3 weeks.'] },
+        'Jute':        { season:'Kharif (Mar–Jun sowing; harvest Aug–Sep)', msp:'₹5,050/quintal tossa jute (2023-24)', water:'High – 1500–2000 mm; retting requires clean water bodies', scheme:'National Jute Board subsidies; JCI procurement centres', threat:'Yellow mite, Stem rot, Hairy caterpillar, Semilooper', tips:['Retting quality determines fibre grade — use tank/pond not field retting.','Use olitory jute (Corchorus olitorius) for superior fibre strength.','Harvest exactly at 50% flowering for optimum fibre-to-wood ratio.','JCI (Jute Corporation of India) buys at MSP — register at local centre.'] }
+      };
+
+      function renderAdvisory(cropName, inputData) {
+        const panel = document.getElementById('advisoryPanel');
+        const info  = CROP_ADVISORY[cropName];
+        if (!info) { panel.style.display = 'none'; return; }
+
+        panel.style.display = 'block';
+        panel.innerHTML = `
+        <div class="advisory-panel">
+          <div class="advisory-header">
+            <div class="advisory-header-icon">🌾</div>
+            <div class="advisory-header-text">
+              <h3>Crop Advisory — ${cropName} for Indian Farmers</h3>
+              <p>Season, MSP pricing, irrigation, threats &amp; government schemes</p>
+            </div>
+          </div>
+          <div class="advisory-body">
+            <div class="advisory-grid">
+              <div class="advisory-card season">
+                <div class="advisory-card-icon">📅</div>
+                <div class="advisory-card-title">Sowing Season</div>
+                <div class="advisory-card-value">${info.season}</div>
+              </div>
+              <div class="advisory-card msp">
+                <div class="advisory-card-icon">💰</div>
+                <div class="advisory-card-title">MSP / Market Price</div>
+                <div class="advisory-card-value">${info.msp}</div>
+              </div>
+              <div class="advisory-card water">
+                <div class="advisory-card-icon">💧</div>
+                <div class="advisory-card-title">Water Requirement</div>
+                <div class="advisory-card-value">${info.water}</div>
+              </div>
+              <div class="advisory-card threat">
+                <div class="advisory-card-icon">🐛</div>
+                <div class="advisory-card-title">Common Threats</div>
+                <div class="advisory-card-value">${info.threat}</div>
+              </div>
+              <div class="advisory-card scheme" style="grid-column: span 2;">
+                <div class="advisory-card-icon">🏛️</div>
+                <div class="advisory-card-title">Government Schemes</div>
+                <div class="advisory-card-value">${info.scheme}</div>
+              </div>
+            </div>
+
+            <div style="font-size:14px;font-weight:700;color:#444;margin-bottom:10px;">💡 Expert Tips for Your Conditions</div>
+            <ul class="advisory-tips-list">
+              ${info.tips.map(t => `<li><span class="tip-icon">✅</span><span>${t}</span></li>`).join('')}
+            </ul>
+
+            <div style="margin-top:18px;padding:14px 18px;background:#fff8e1;border-radius:12px;border-left:4px solid #f9a825;display:flex;align-items:flex-start;gap:12px;">
+              <span style="font-size:20px;">ℹ️</span>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#6d4c00;margin-bottom:4px;">Your Soil Conditions vs. This Crop</div>
+                <div style="font-size:13px;color:#7a5c00;line-height:1.7;">
+                  N: <b>${inputData.n} ppm</b> &nbsp;|&nbsp; P: <b>${inputData.p} ppm</b> &nbsp;|&nbsp; K: <b>${inputData.k} ppm</b>
+                  &nbsp;|&nbsp; pH: <b>${inputData.ph}</b> &nbsp;|&nbsp;
+                  Temp: <b>${inputData.temperature}°C</b> &nbsp;|&nbsp; Humidity: <b>${inputData.humidity}%</b> &nbsp;|&nbsp; Rainfall: <b>${inputData.rainfall} mm</b>
+                </div>
+              </div>
+            </div>
+
+            <div class="advisory-disclaimer">Advisory based on ICAR recommendations &amp; Government of India MSP 2023-24. Always consult your local Krishi Vigyan Kendra (KVK) for field-specific guidance.</div>
+          </div>
+        </div>`;
+
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
       
       // Smooth scrolling for navigation links

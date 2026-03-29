@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for , session ,flash, jsonify, Markup
+from flask import Flask, render_template, request, redirect, url_for , session ,flash, jsonify
+from markupsafe import Markup
+import os
 import requests , json
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -18,7 +20,25 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.fertilizer import fertilizer_dic
 import config
 
+from utils.disease_detection import predict_disease
+from utils.explainable_ai import explain_crop
+import base64
+import io
+import traceback
+
+from utils.disease_detection import predict_disease
+from utils.explainable_ai import explain_crop
+import base64
+import io
+import traceback
+
 app = Flask(__name__)
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UPLOAD_FOLDER = os.path.join(_BASE_DIR, 'api', 'static', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UPLOAD_FOLDER = os.path.join(_BASE_DIR, 'api', 'static', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.secret_key = '8e388483h8fqeubb' 
 
 client = MongoClient("mongodb+srv://admin:admin@app.1y5xkze.mongodb.net/?retryWrites=true&w=majority")
@@ -117,15 +137,36 @@ marketplace_items = [
 def home():
     return render_template('index.html')
 
+AGMARKET_API_KEY = '579b464db66ec23bdd000001bf789eaa575c446474b491404b9d2864'
 
 @app.route('/crop-prices', methods=['GET', 'POST'])
 def crop_prices_view():
+    today = datetime.now().strftime('%Y-%m-%d')
+    today= '2026-03-26' # e.g. 2026-03-27
+    district = ''
+    data = None
+
     if request.method == 'POST':
-        district_name = request.form['district']
-        crop_prices = requests.get(f'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&filters%5Bstate.keyword%5D=Maharashtra&filters%5Bdistrict%5D={district_name}').json()
-        print(crop_prices)
-        return render_template('crop_prices.html', data=crop_prices)
-    return render_template('crop_prices.html',data=cp)
+        district = request.form.get('district', '').strip()
+        url = (
+            f'https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24'
+            f'?api-key={AGMARKET_API_KEY}'
+            f'&format=json'
+            f'&limit=100'
+            f'&filters%5BState%5D=Maharashtra'
+            f'&filters%5BDistrict%5D={district}'
+            f'&filters%5BArrival_Date%5D={today}'
+        )
+        try:
+            resp = requests.get(url, timeout=10)
+            data = resp.json()
+        except Exception as e:
+            data = {'error': str(e), 'records': [], 'total': 0}
+
+    return render_template('crop_prices.html',
+                           data=data,
+                           district=district,
+                           today=today)
 
 
 @app.route('/marketplace', methods=['GET'])
@@ -309,37 +350,23 @@ class MockRandomForestModel:
 
 try:
     # Load crop recommendation model
-    # Get the absolute path to the models directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
     parent_dir = os.path.dirname(current_dir)
-    crop_recommendation_model_path = os.path.join(parent_dir, 'models', 'RandomForest.pkl')
     
-    if os.path.exists(crop_recommendation_model_path):
+    # Try loading new model first
+    new_model_path = os.path.join(parent_dir, 'models', 'model.pkl')
+    
+    if os.path.exists(new_model_path):
         try:
-            # Try loading with joblib first (recommended for scikit-learn models)
-            crop_recommendation_model = joblib.load(crop_recommendation_model_path)
-            print("Crop recommendation model loaded successfully with joblib")
-        except Exception as joblib_error:
-            print(f"Error loading with joblib: {joblib_error}")
-            # Try with pickle
-            try:
-                with open(crop_recommendation_model_path, 'rb') as f:
-                    crop_recommendation_model = pickle.load(f)
-                print("Crop recommendation model loaded successfully with pickle")
-            except Exception as pickle_error:
-                print(f"Error loading pickle file: {pickle_error}")
-                # Try with different encoding
-                try:
-                    with open(crop_recommendation_model_path, 'rb') as f:
-                        crop_recommendation_model = pickle.load(f, encoding='latin1')
-                    print("Crop recommendation model loaded successfully (with latin1 encoding)")
-                except Exception as encoding_error:
-                    print(f"Error with latin1 encoding: {encoding_error}")
-                    print("Using mock RandomForest model due to file corruption")
-                    crop_recommendation_model = MockRandomForestModel()
+            crop_recommendation_model = pickle.load(open(new_model_path, 'rb'))
+            print("✅ New robust crop recommendation model loaded successfully!")
+        except Exception as e:
+            print(f"Error loading new model: {e}")
+            crop_recommendation_model = MockRandomForestModel()
     else:
-        print(f"Crop recommendation model file not found at {crop_recommendation_model_path}, using mock model")
+        print(f"Crop model not found at {new_model_path}, using mock")
         crop_recommendation_model = MockRandomForestModel()
+
 except Exception as e:
     print(f"Error loading crop recommendation model: {e}")
     print("Using mock RandomForest model")
@@ -522,6 +549,16 @@ def get_ml_crop_recommendation(n, p, k, temperature, humidity, ph, rainfall):
         print("ML model not available, using rule-based fallback")
         return get_crop_recommendation(n, p, k, temperature, humidity, ph, rainfall)
     
+    # Mapping from integer label to crop name (matches the training dataset encoding)
+    crop_dict = {
+        1: "Rice", 2: "Maize", 3: "Jute", 4: "Cotton", 5: "Coconut",
+        6: "Papaya", 7: "Orange", 8: "Apple", 9: "Muskmelon",
+        10: "Watermelon", 11: "Grapes", 12: "Mango", 13: "Banana",
+        14: "Pomegranate", 15: "Lentil", 16: "Blackgram", 17: "Mungbean",
+        18: "Mothbeans", 19: "Pigeonpeas", 20: "Kidneybeans",
+        21: "Chickpea", 22: "Coffee"
+    }
+
     try:
         # Prepare data in the format expected by the model
         # The model expects: [N, P, K, temperature, humidity, ph, rainfall]
@@ -529,13 +566,19 @@ def get_ml_crop_recommendation(n, p, k, temperature, humidity, ph, rainfall):
         
         # Get prediction from RandomForest model
         prediction = crop_recommendation_model.predict(data)
-        crop_name = prediction[0]
+        raw_pred = prediction[0]
+
+        # Decode integer label to crop name (model returns int64 labels)
+        if isinstance(raw_pred, (int, np.integer)):
+            crop_name = crop_dict.get(int(raw_pred), f"Crop-{int(raw_pred)}")
+        else:
+            crop_name = str(raw_pred).strip().capitalize()
         
         # Get prediction probabilities for confidence scoring
         try:
             probabilities = crop_recommendation_model.predict_proba(data)
             max_probability = np.max(probabilities)
-            confidence_score = max_probability * 100
+            confidence_score = float(max_probability * 100)
             
             if confidence_score >= 80:
                 confidence = 'High'
@@ -552,10 +595,11 @@ def get_ml_crop_recommendation(n, p, k, temperature, humidity, ph, rainfall):
         print(f"ML model prediction: {crop_name} (confidence: {confidence_score:.1f}%)")
         
         # Return in the same format as the rule-based function
+        # All values are native Python types to ensure JSON serialization
         return [{
-            'crop': crop_name,
+            'crop': str(crop_name),
             'score': float(round(confidence_score, 1)),
-            'confidence': confidence
+            'confidence': str(confidence)
         }]
         
     except Exception as e:
@@ -769,7 +813,7 @@ def fertilizer_predict():
         
         # Load fertilizer data
         try:
-            df = pd.read_csv('../Data/fertilizer.csv')
+            df = pd.read_csv(os.path.join(_BASE_DIR, 'Data', 'fertilizer.csv'))
             crop_data = df[df['Crop'] == crop_name]
             
             if crop_data.empty:
@@ -1026,19 +1070,29 @@ def logout():
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login','register', 'home', 'crop_recommendation', 'fertilizer_predict', 'weather', 'chatbot', 'chatbot_page', 'crop_prices_view', 'feedback']
+    allowed_routes = ['login','register', 'home', 'crop_recommendation', 'fertilizer_predict',
+                      'weather', 'chatbot', 'chatbot_page', 'crop_prices_view', 'feedback',
+                      'explain_crop_api', 'yield_prediction', 'yield_prediction_api']  # API routes must not redirect to login HTML
     if 'user' not in session and request.endpoint not in allowed_routes:
+        if request.path.startswith('/api/'):
+            return jsonify({'success': False, 'error': 'Authentication required'}), 401
         return redirect(url_for('login'))
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    logs_collection.insert_one({
-        'type': 'error',
-        'error': str(e),
-        'path': request.path,
-        'method': request.method,
-        'timestamp': datetime.utcnow()
-    })
+    try:
+        logs_collection.insert_one({
+            'type': 'error',
+            'error': str(e),
+            'path': request.path,
+            'method': request.method,
+            'timestamp': datetime.utcnow()
+        })
+    except Exception:
+        pass
+    # Return JSON for API routes so the browser doesn't receive HTML
+    if request.path.startswith('/api/'):
+        return jsonify({'success': False, 'error': str(e)}), 500
     return render_template('error.html', error=str(e)), 500
 
 @app.route('/feedback', methods=['GET', 'POST'])
@@ -1055,6 +1109,294 @@ def feedback():
         })
         return render_template('feedback.html', msg='Feedback submitted!')
     return render_template('feedback.html', msg=None)
+
+
+@app.route('/disease-page')
+def disease_page():
+    if 'username' not in session:
+        flash('You must be logged in to access Disease Detection.')
+        return redirect(url_for('login'))
+    return render_template('disease.html')
+
+@app.route('/disease-detect', methods=['POST'])
+def disease_detect():
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'error': 'No file uploaded'})
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'success': False, 'error': 'No selected file'})
+    
+    model_path = os.path.join(_BASE_DIR, 'models', 'plant_disease_model.pth')
+    res = predict_disease(file, model_path)
+    return jsonify(res)
+
+@app.route('/api/explain-crop', methods=['POST'])
+def explain_crop_api():
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        features = data.get('features', {})
+        prediction_val = data.get('prediction', 'Unknown')
+
+        try:
+            n           = float(features.get('N', 0))
+            p           = float(features.get('P', 0))
+            k           = float(features.get('K', 0))
+            temperature = float(features.get('temperature', 0))
+            humidity    = float(features.get('humidity', 0))
+            ph          = float(features.get('ph', 0))
+            rainfall    = float(features.get('rainfall', 0))
+        except (TypeError, ValueError) as parse_err:
+            return jsonify({'success': False, 'error': f'Invalid feature values: {parse_err}'}), 400
+
+        global crop_recommendation_model
+        if crop_recommendation_model is None or isinstance(crop_recommendation_model, MockRandomForestModel):
+            return jsonify({'success': False, 'error': 'Real ML model not loaded — SHAP unavailable'})
+
+        res = explain_crop(crop_recommendation_model, n, p, k, temperature, humidity, ph, rainfall, prediction_val)
+        return jsonify(res)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+
+# ═══════════════════════════════════════════════════════════════
+#  CROP YIELD PREDICTION ENGINE (ICAR-calibrated agronomic model)
+# ═══════════════════════════════════════════════════════════════
+
+# Base yield (t/ha) — national average from GoI / ICAR data
+CROP_BASE_YIELD = {
+    'Rice':       3.5,  'Wheat':      3.2,  'Maize':      3.0,
+    'Sugarcane': 70.0,  'Cotton':     1.8,  'Jute':       2.5,
+    'Chickpea':   1.1,  'Lentil':     0.9,  'Blackgram':  0.75,
+    'Mungbean':   0.8,  'Mothbeans':  0.6,  'Pigeonpeas': 0.85,
+    'Kidneybeans':1.2,  'Banana':    35.0,  'Mango':     10.0,
+    'Coconut':  10000,  'Papaya':    40.0,  'Orange':    12.0,
+    'Grapes':   15.0,   'Watermelon':25.0,  'Muskmelon': 18.0,
+    'Coffee':    0.9,
+}
+# Coconut is in nuts/ha — convert to t/ha for display: ≈ 6 t copra equivalent
+COCONUT_COPRA_EQUIV = 6.0
+
+# MSP / indicative market price (₹/tonne) — GoI 2023-24
+CROP_PRICE_PER_TONNE = {
+    'Rice':21830,'Wheat':22750,'Maize':20900,'Sugarcane':3400,
+    'Cotton':66200,'Jute':50500,'Chickpea':54400,'Lentil':60000,
+    'Blackgram':74000,'Mungbean':85580,'Mothbeans':55500,
+    'Pigeonpeas':70000,'Kidneybeans':55000,'Banana':12000,
+    'Mango':30000,'Coconut':10860,'Papaya':10000,'Orange':25000,
+    'Grapes':60000,'Watermelon':8000,'Muskmelon':12000,'Coffee':80000,
+}
+
+# Optimal soil/climate ranges per crop (used for multiplier scoring)
+CROP_OPTIMA = {
+    'Rice':       dict(n=(80,120),  p=(40,60),  k=(40,60),  ph=(5.5,7.0), rain=(1000,2500), temp=(22,30)),
+    'Wheat':      dict(n=(80,120),  p=(40,60),  k=(40,60),  ph=(6.0,7.5), rain=(450,900),  temp=(15,22)),
+    'Maize':      dict(n=(100,150), p=(50,80),  k=(50,80),  ph=(5.8,7.0), rain=(600,1200), temp=(20,28)),
+    'Sugarcane':  dict(n=(150,200), p=(60,100), k=(80,120), ph=(6.0,7.5), rain=(1000,1800),temp=(25,35)),
+    'Cotton':     dict(n=(80,120),  p=(40,60),  k=(40,60),  ph=(6.0,8.0), rain=(600,1200), temp=(25,35)),
+    'Jute':       dict(n=(60,100),  p=(30,60),  k=(30,60),  ph=(6.0,7.5), rain=(1200,2000),temp=(25,35)),
+    'Chickpea':   dict(n=(20,40),   p=(40,60),  k=(20,40),  ph=(6.0,7.5), rain=(300,600),  temp=(15,25)),
+    'Lentil':     dict(n=(20,40),   p=(30,50),  k=(20,40),  ph=(6.0,7.5), rain=(250,500),  temp=(12,22)),
+    'Blackgram':  dict(n=(20,40),   p=(30,50),  k=(20,40),  ph=(6.0,7.5), rain=(400,700),  temp=(25,35)),
+    'Mungbean':   dict(n=(20,40),   p=(30,50),  k=(20,40),  ph=(6.0,7.5), rain=(350,700),  temp=(25,35)),
+    'Mothbeans':  dict(n=(10,30),   p=(20,40),  k=(10,30),  ph=(6.5,8.0), rain=(200,400),  temp=(28,38)),
+    'Pigeonpeas': dict(n=(20,40),   p=(40,60),  k=(20,40),  ph=(6.0,7.5), rain=(600,1000), temp=(25,35)),
+    'Kidneybeans':dict(n=(20,40),   p=(30,50),  k=(30,50),  ph=(6.0,7.0), rain=(300,600),  temp=(15,25)),
+    'Banana':     dict(n=(150,200), p=(50,100), k=(150,250),ph=(5.5,7.0), rain=(900,1800), temp=(25,35)),
+    'Mango':      dict(n=(100,150), p=(50,80),  k=(80,120), ph=(5.5,7.5), rain=(600,1200), temp=(24,35)),
+    'Coconut':    dict(n=(100,150), p=(40,80),  k=(200,300),ph=(5.5,7.0), rain=(1000,2000),temp=(25,32)),
+    'Papaya':     dict(n=(100,150), p=(50,80),  k=(80,120), ph=(6.0,7.0), rain=(800,1500), temp=(25,35)),
+    'Orange':     dict(n=(80,120),  p=(30,60),  k=(80,120), ph=(6.0,7.5), rain=(600,1200), temp=(15,30)),
+    'Grapes':     dict(n=(80,120),  p=(30,60),  k=(80,120), ph=(6.0,7.5), rain=(500,900),  temp=(20,30)),
+    'Watermelon': dict(n=(80,120),  p=(30,60),  k=(60,100), ph=(6.0,7.5), rain=(400,700),  temp=(25,35)),
+    'Muskmelon':  dict(n=(60,100),  p=(30,50),  k=(50,80),  ph=(6.0,7.5), rain=(400,700),  temp=(25,35)),
+    'Coffee':     dict(n=(100,150), p=(30,60),  k=(80,120), ph=(5.5,6.5), rain=(1500,2500),temp=(18,28)),
+}
+
+IRRIGATION_MULT  = {'rainfed':0.80,'canal':1.05,'drip':1.18,'sprinkler':1.12,'borewell':1.08}
+FERTILIZER_MULT  = {'none':0.70,'low':0.88,'medium':1.00,'high':1.15}
+SEED_MULT        = {'local':0.80,'certified':1.00,'hybrid':1.18}
+
+IMPROVEMENT_TIPS = {
+    'soil_n': 'Nitrogen is suboptimal — apply urea/DAP in split doses at sowing and tillering/vegetative stage.',
+    'soil_p': 'Phosphorus is below optimal — apply SSP or DAP as basal dose before sowing.',
+    'soil_k': 'Potassium is low — apply MOP (Muriate of Potash) for better root health and drought tolerance.',
+    'soil_ph_low': 'Soil pH is too acidic — apply agricultural lime (CaCO₃) at 2–4 t/ha to raise pH.',
+    'soil_ph_high':'Soil pH is too alkaline — apply gypsum or sulphur to lower pH for better nutrient uptake.',
+    'rainfall': 'Rainfall is outside the optimal range — consider supplemental irrigation or rainwater harvesting.',
+    'temp': 'Temperature is not ideal — choose a heat/cold-tolerant variety and adjust sowing date accordingly.',
+    'irrigation':'Upgrade from rain-fed to drip or sprinkler irrigation to potentially increase yield by 15–30%.',
+    'fertilizer':'Switch to split/precision fertilizer application to reduce wastage and boost yield quality.',
+    'seed': 'Upgrade to certified HYV or hybrid seeds — they yield 20–40% more than local varieties.',
+    'general': 'Register for PM-KISAN, PMFBY crop insurance and eNAM digital market to secure income.',
+}
+
+def _range_score(val, lo, hi):
+    """Return 0–100 score for how close val is to [lo, hi]."""
+    if lo <= val <= hi:
+        return 100.0
+    mid  = (lo + hi) / 2
+    span = (hi - lo) / 2 or 1
+    dist = max(abs(val - lo), abs(val - hi))
+    return max(0, round(100 - (dist / span) * 40, 1))
+
+def _soil_multiplier(crop, n, p, k, ph):
+    opt = CROP_OPTIMA.get(crop, {})
+    scores = []
+    if 'n'  in opt: scores.append(_range_score(n,  *opt['n']))
+    if 'p'  in opt: scores.append(_range_score(p,  *opt['p']))
+    if 'k'  in opt: scores.append(_range_score(k,  *opt['k']))
+    if 'ph' in opt: scores.append(_range_score(ph, *opt['ph']))
+    avg = sum(scores) / len(scores) if scores else 80
+    return 0.70 + (avg / 100) * 0.35   # range 0.70 – 1.05
+
+def _climate_multiplier(crop, rainfall, temperature):
+    opt = CROP_OPTIMA.get(crop, {})
+    s_r = _range_score(rainfall,    *opt.get('rain', (600, 1500)))
+    s_t = _range_score(temperature, *opt.get('temp', (20,  32)))
+    avg = (s_r + s_t) / 2
+    return 0.72 + (avg / 100) * 0.33
+
+def _build_tips(crop, n, p, k, ph, rainfall, temperature, irrigation, fertilizer_use, seed_quality):
+    tips = []
+    opt  = CROP_OPTIMA.get(crop, {})
+    if opt:
+        if n  < opt.get('n',  (0,300))[0]:  tips.append(IMPROVEMENT_TIPS['soil_n'])
+        if p  < opt.get('p',  (0,150))[0]:  tips.append(IMPROVEMENT_TIPS['soil_p'])
+        if k  < opt.get('k',  (0,250))[0]:  tips.append(IMPROVEMENT_TIPS['soil_k'])
+        lo, hi = opt.get('ph',(6,7.5))
+        if ph < lo: tips.append(IMPROVEMENT_TIPS['soil_ph_low'])
+        if ph > hi: tips.append(IMPROVEMENT_TIPS['soil_ph_high'])
+        r_lo, r_hi = opt.get('rain',(500,2000))
+        if not (r_lo <= rainfall <= r_hi): tips.append(IMPROVEMENT_TIPS['rainfall'])
+        t_lo, t_hi = opt.get('temp',(18,35))
+        if not (t_lo <= temperature <= t_hi): tips.append(IMPROVEMENT_TIPS['temp'])
+    if irrigation  == 'rainfed':  tips.append(IMPROVEMENT_TIPS['irrigation'])
+    if fertilizer_use in ('none','low'): tips.append(IMPROVEMENT_TIPS['fertilizer'])
+    if seed_quality == 'local':   tips.append(IMPROVEMENT_TIPS['seed'])
+    tips.append(IMPROVEMENT_TIPS['general'])
+    return list(dict.fromkeys(tips))[:6]  # deduplicate, max 6
+
+def predict_yield(crop, area, season, state, n, p, k, ph,
+                  rainfall, temperature, irrigation, fertilizer_use, seed_quality):
+    base      = CROP_BASE_YIELD.get(crop)
+    if base is None:
+        return None, 'Crop not found in yield database'
+
+    # Coconut: normalise nuts → copra-equivalent tonnes
+    if crop == 'Coconut':
+        base = COCONUT_COPRA_EQUIV
+
+    soil_m  = _soil_multiplier(crop, n, p, k, ph)
+    clim_m  = _climate_multiplier(crop, rainfall, temperature)
+    irr_m   = IRRIGATION_MULT.get(irrigation, 1.0)
+    fert_m  = FERTILIZER_MULT.get(fertilizer_use, 1.0)
+    seed_m  = SEED_MULT.get(seed_quality, 1.0)
+
+    yield_t_ha = round(base * soil_m * clim_m * irr_m * fert_m * seed_m, 2)
+    total_t    = round(yield_t_ha * area, 2)
+    price      = CROP_PRICE_PER_TONNE.get(crop, 20000)
+    revenue    = int(total_t * price)
+
+    # Quality grade
+    nat_avg = base
+    ratio   = yield_t_ha / nat_avg
+    if   ratio >= 1.20: grade, grade_reason = 'A', 'Yield ≥ 120% of national average — excellent input management!'
+    elif ratio >= 1.00: grade, grade_reason = 'B', 'Yield meets or exceeds national average — good practices in place.'
+    elif ratio >= 0.80: grade, grade_reason = 'C', 'Yield is 80–100% of national average — moderate constraints detected.'
+    else:               grade, grade_reason = 'D', 'Yield is below 80% of national average — significant limiting factors present.'
+
+    vs_national = round((yield_t_ha - nat_avg) / nat_avg * 100, 1)
+
+    # Factor scores for the bar chart
+    opt = CROP_OPTIMA.get(crop, {})
+    factors = [
+        {'name': 'Soil Nitrogen',   'score': int(_range_score(n,  *opt.get('n',  (50,150))))},
+        {'name': 'Soil Phosphorus', 'score': int(_range_score(p,  *opt.get('p',  (30,80))))},
+        {'name': 'Soil Potassium',  'score': int(_range_score(k,  *opt.get('k',  (30,100))))},
+        {'name': 'Soil pH',         'score': int(_range_score(ph, *opt.get('ph', (6.0,7.5))))},
+        {'name': 'Rainfall',        'score': int(_range_score(rainfall,    *opt.get('rain',(600,1500))))},
+        {'name': 'Temperature',     'score': int(_range_score(temperature, *opt.get('temp',(20,32))))},
+        {'name': 'Irrigation',      'score': int(irr_m  * 95)},
+        {'name': 'Fertilizer',      'score': int(fert_m * 95)},
+        {'name': 'Seed Quality',    'score': int(seed_m * 95)},
+    ]
+
+    # 3-scenario forecast
+    def _scenario(mult, label):
+        y = round(yield_t_ha * mult, 2)
+        t = round(y * area, 2)
+        r = int(t * price)
+        rat = y / nat_avg
+        g = 'A' if rat>=1.2 else 'B' if rat>=1.0 else 'C' if rat>=0.8 else 'D'
+        return {'scenario':label,'yield_t_ha':y,'total_yield_t':t,'revenue':r,'grade':g}
+
+    scenarios = [
+        _scenario(0.80, 'Pessimistic (-20%)'),
+        _scenario(1.00, 'Base Estimate'),
+        _scenario(1.20, 'Optimistic (+20%)'),
+    ]
+
+    tips = _build_tips(crop, n, p, k, ph, rainfall, temperature, irrigation, fertilizer_use, seed_quality)
+
+    return {
+        'success':          True,
+        'crop':             crop,
+        'area':             area,
+        'yield_t_ha':       yield_t_ha,
+        'total_yield_t':    total_t,
+        'revenue':          revenue,
+        'grade':            grade,
+        'grade_reason':     grade_reason,
+        'national_avg':     round(nat_avg, 2),
+        'vs_national':      vs_national,
+        'factors':          factors,
+        'scenario_forecast':scenarios,
+        'tips':             tips,
+    }, None
+
+
+@app.route('/yield-prediction')
+def yield_prediction():
+    return render_template('yield_prediction.html')
+
+
+@app.route('/api/yield-prediction', methods=['POST'])
+def yield_prediction_api():
+    try:
+        d = request.get_json(force=True, silent=True) or {}
+        crop           = str(d.get('crop', '')).strip()
+        area           = float(d.get('area', 1))
+        season         = str(d.get('season', ''))
+        state          = str(d.get('state', ''))
+        n              = float(d.get('n', 60))
+        p              = float(d.get('p', 30))
+        k              = float(d.get('k', 40))
+        ph             = float(d.get('ph', 6.5))
+        rainfall       = float(d.get('rainfall', 800))
+        temperature    = float(d.get('temperature', 25))
+        irrigation     = str(d.get('irrigation', 'canal'))
+        fertilizer_use = str(d.get('fertilizer_use', 'medium'))
+        seed_quality   = str(d.get('seed_quality', 'certified'))
+
+        if not crop:
+            return jsonify({'success': False, 'error': 'Please select a crop'}), 400
+        if area <= 0:
+            return jsonify({'success': False, 'error': 'Area must be greater than 0'}), 400
+
+        result, err = predict_yield(crop, area, season, state, n, p, k, ph,
+                                    rainfall, temperature, irrigation, fertilizer_use, seed_quality)
+        if err:
+            return jsonify({'success': False, 'error': err}), 400
+        return jsonify(result)
+
+    except (ValueError, TypeError) as e:
+        return jsonify({'success': False, 'error': f'Invalid input: {e}'}), 400
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
